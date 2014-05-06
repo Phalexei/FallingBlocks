@@ -12,10 +12,9 @@ import java.util.List;
 public class Renderer implements IUpdatable{
 
     private List<IRenderable> renderables;
-    private int score = 0;
 
     public Renderer() throws LWJGLException {
-        Display.setDisplayMode(new DisplayMode(0, 800));
+        Display.setDisplayMode(new DisplayMode(500, 800));
         Display.setTitle("Falling Blocks");
         Display.create();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -43,6 +42,6 @@ public class Renderer implements IUpdatable{
     }
 
     public void updateScore(int score) {
-        Display.setTitle("Falling Blocks - "+score);
+        Display.setTitle("Falling Blocks - " + score);
     }
 }
