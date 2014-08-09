@@ -26,10 +26,9 @@ public class Input implements IUpdatable {
     }
 
     public void update(int tick) {
-        InputHandler handler = null;
+        InputHandler handler;
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) { // key was pressed
-                System.out.println(Keyboard.getEventKey());
                 handler = handlers.get(Keyboard.getEventKey());
                 if (handler != null) {
                     handler.action(game);

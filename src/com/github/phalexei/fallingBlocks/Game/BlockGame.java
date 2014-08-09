@@ -5,8 +5,6 @@ import com.github.phalexei.fallingBlocks.Game.Objects.Shape;
 import com.github.phalexei.fallingBlocks.IUpdatable;
 import com.github.phalexei.fallingBlocks.Rendering.Renderer;
 
-import java.util.List;
-
 public class BlockGame implements IUpdatable {
 
     private int ticksSinceLastUpdate;
@@ -19,6 +17,10 @@ public class BlockGame implements IUpdatable {
     private Shape fallingShape;
     private Renderer renderer;
     private GameState gameState;
+
+    public Integer getScore() {
+        return score;
+    }
 
     public enum GameState {
         RUNNING,
@@ -38,7 +40,7 @@ public class BlockGame implements IUpdatable {
         fallingShape = null;
         gameState = GameState.RUNNING;
 
-        ui = new GameUI();
+        ui = new GameUI(this);
         renderer.addRenderable(ui);
 
         grid = new GameGrid();
@@ -59,7 +61,6 @@ public class BlockGame implements IUpdatable {
 
             if (fallingShape == null) {
                 spawnNewShape();
-                System.out.println("new block !");
             } else {
                 tryFall();
             }
@@ -67,7 +68,7 @@ public class BlockGame implements IUpdatable {
     }
 
     private void spawnNewShape() {
-        fallingShape = Shape.randomShape(grid.WIDTH/2-1, grid.HEIGHT-1);
+        fallingShape = Shape.randomShape(GameGrid.WIDTH /2-1, GameGrid.HEIGHT -1);
         renderer.addRenderable(fallingShape);
     }
 
@@ -115,15 +116,13 @@ public class BlockGame implements IUpdatable {
         if (fallingShape != null) {
             if (fallingShape.canRotate(grid)) {
                 fallingShape.rotate();
-            } else {
-
             }
         }
     }
 
     public void addLines(int nbLines) {
         lines += nbLines;
-        if (((int) lines / 10)  > difficulty) {
+        if (lines / 10 > difficulty) {
             levelup();
         }
 
@@ -131,6 +130,5 @@ public class BlockGame implements IUpdatable {
 
         score += points;
         ui.addScore(points);
-        renderer.updateScore(score);
     }
 }

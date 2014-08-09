@@ -14,6 +14,7 @@ public class Block implements IRenderable{
         this.green = green;
         this.blue = blue;
     }
+
     public void move(Shape.Direction dir) {
         switch (dir) {
             case DOWN:
@@ -34,7 +35,7 @@ public class Block implements IRenderable{
         GL11.glColor3f(red, green, blue);
 
         // draw quad
-        //TODO : convert x,y to screen coords
+        //TODO : convert x,y to screen coords better
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x*25,y*25);
         GL11.glVertex2f(x*25+25,y*25);
