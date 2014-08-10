@@ -1,12 +1,12 @@
 package com.github.phalexei.fallingBlocks.Game.Objects;
 
 import com.github.phalexei.fallingBlocks.Game.Objects.Shapes.*;
-import com.github.phalexei.fallingBlocks.Rendering.IRenderable;
+import com.github.phalexei.fallingBlocks.Rendering.Renderable;
 
 import java.util.List;
 import java.util.Random;
 
-public abstract class Shape implements IRenderable {
+public abstract class Shape extends Renderable {
 
     protected Orientation orientation;
     protected int x,y;
@@ -66,12 +66,21 @@ public abstract class Shape implements IRenderable {
         blocks = getNewBlocks();
     }
 
+    public boolean collides(GameGrid grid) {
+        for (Block b : blocks) {
+            if (b.collides(grid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canRotate(GameGrid grid) {
         boolean canRotate = true;
         Orientation tmp = orientation;
         orientation = getNextOrientation();
         for (Block b : getNewBlocks()) {
-            canRotate &= grid.isFull(b.getX(), b.getY());
+            canRotate &= grid.isEmpty(b.getX(), b.getY());
         }
         orientation = tmp;
         return canRotate;
@@ -125,6 +134,11 @@ public abstract class Shape implements IRenderable {
         for (Block b : blocks) {
             b.render(tick);
         }
+    }
+
+    @Override
+    public ZIndex getZIndex() {
+        return ZIndex.MIDDLE;
     }
 
     // returns a new random shape

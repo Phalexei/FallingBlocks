@@ -15,6 +15,8 @@ public class Main {
     private int fps=60;
     private List<IUpdatable> updatables;
 
+    public static final boolean DEBUG = true;
+
     public static void main(String[] args){
         System.out.println("Hello wrold!");
         new Main();
@@ -40,6 +42,10 @@ public class Main {
 
             // main game loop
             while (!Display.isCloseRequested()) {
+
+                if (!Display.isActive() && game.getState() == BlockGame.GameState.RUNNING) { // window lost focus
+                    game.pause();
+                }
 
                 for (IUpdatable u : updatables) {
                     u.update(delta);

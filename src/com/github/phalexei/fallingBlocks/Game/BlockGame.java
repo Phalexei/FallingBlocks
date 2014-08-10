@@ -11,22 +11,42 @@ public class BlockGame implements IUpdatable {
     private int difficulty;
     private int lines;
     private int score;
-    private double diffCoef;       // multiplier, not increasing linearly
+    private double diffCoef;
     private GameUI ui;
     private GameGrid grid;
     private Shape fallingShape;
     private Renderer renderer;
     private GameState gameState;
+    private GameState prevState;
 
     public Integer getScore() {
         return score;
     }
 
+    public GameState getState() {
+        return gameState;
+    }
+
     public enum GameState {
         RUNNING,
+        ERASING_LINE,
         START,
         PAUSED,
-        OVER
+        OVER;
+
+        private boolean pausable;
+
+        static {
+            RUNNING.pausable = true;
+            ERASING_LINE.pausable = true;
+            START.pausable = false;
+            PAUSED.pausable = false;
+            OVER.pausable = false;
+        }
+
+        boolean isPausable() {
+            return pausable;
+        }
     }
 
     public BlockGame(Renderer renderer) {
@@ -35,22 +55,39 @@ public class BlockGame implements IUpdatable {
         }
         this.renderer = renderer;
 
-        ticksSinceLastUpdate = 1000;
-        difficulty = 0;
-        fallingShape = null;
-        gameState = GameState.RUNNING;
+        grid = new GameGrid();
+        renderer.addRenderable(grid);
 
         ui = new GameUI(this);
         renderer.addRenderable(ui);
 
-        grid = new GameGrid();
-        renderer.addRenderable(grid);
+        reset();
+    }
+
+    public void start() {
+        gameState = GameState.RUNNING;
+    }
+
+    public void reset() {
+        gameState = GameState.START;
+        ticksSinceLastUpdate = 1000;
+        difficulty = 0;
+        lines = 0;
+        score = 0;
+        diffCoef = 0;
+        renderer.removeRenderable(fallingShape);
+        fallingShape = null;
+        gameState = GameState.START;
+        prevState = null;
+
+        grid.reset();
+        ui.reset();
     }
 
     @Override
     public void update(int tick) {
         if (gameState == GameState.RUNNING) {
-                doGameLoop(tick);
+            doGameLoop(tick);
         }
     }
 
@@ -60,16 +97,23 @@ public class BlockGame implements IUpdatable {
             ticksSinceLastUpdate = 0;
 
             if (fallingShape == null) {
-                spawnNewShape();
+                if (!spawnNewShape()) {
+                    gameState = GameState.OVER;
+                }
             } else {
                 tryFall();
             }
         }
     }
 
-    private void spawnNewShape() {
-        fallingShape = Shape.randomShape(GameGrid.WIDTH /2-1, GameGrid.HEIGHT -1);
+    private boolean spawnNewShape() {
+        boolean ret = false;
+        fallingShape = Shape.randomShape(GameGrid.WIDTH / 2 - 1, GameGrid.HEIGHT - 1);
         renderer.addRenderable(fallingShape);
+        if (!fallingShape.collides(grid)) {
+            ret = true;
+        }
+        return ret;
     }
 
     // try and make the block fall. If it can't, add to grid and delete
@@ -88,12 +132,12 @@ public class BlockGame implements IUpdatable {
 
     // gives time to wait between updates, decreases as level increases
     private int getTicksThreshold() {
-        return (int) (1000 - (900*diffCoef));
+        return (int) Math.max((1000 - (1000 * diffCoef)), 0);
     }
 
     private void levelup() {
         difficulty++;
-        diffCoef = (Math.sqrt(difficulty) / Math.sqrt(difficulty+10));
+        diffCoef =  difficulty / 15;
     }
 
     public void moveLeft() {
@@ -109,10 +153,11 @@ public class BlockGame implements IUpdatable {
     }
 
     public void pause() {
-        if (gameState == GameState.RUNNING) {
+        if (gameState.isPausable()) {
+            prevState = gameState;
             gameState = GameState.PAUSED;
         } else if (gameState == GameState.PAUSED) {
-            gameState = GameState.RUNNING;
+            gameState = prevState;
         }
     }
 
@@ -134,5 +179,7 @@ public class BlockGame implements IUpdatable {
 
         score += points;
         ui.addScore(points);
+
+        ticksSinceLastUpdate = 1000;
     }
 }

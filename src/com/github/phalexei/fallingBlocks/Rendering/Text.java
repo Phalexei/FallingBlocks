@@ -1,5 +1,8 @@
 package com.github.phalexei.fallingBlocks.Rendering;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+
+import java.nio.FloatBuffer;
 
 //saucecode's text rendering in opengl 1.1
 //edited by kadence.
@@ -8,15 +11,41 @@ import org.lwjgl.opengl.GL11;
 public class Text {
 
     public static void drawString(String s, int x, int y) {
-        drawString(s, x, y, false);
+        drawString(s, x, y, false, 1.0f);
     }
 
-    public static void drawString(String s, int x, int y, boolean bold){
+    public static void drawString(String s, int x, int y, float opacity) {
+        drawString(s, x, y, false, opacity);
+    }
+    public static void drawString(String s, int x, int y, boolean bold) {
+        drawString(s, x, y, bold, 1.0f);
+    }
+
+    public static void drawString(String s, int x, int y, boolean bold, float opacity){
         int startX = x;
-        GL11.glBegin(GL11.GL_POINTS);
+
         if (bold) {
+            GL11.glPointSize(2f);
+        } else {
             GL11.glPointSize(1.5f);
         }
+
+        //TODO: handle opacity
+        if (opacity != 1.0f) {
+            // enable opacity
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            // get current color
+            FloatBuffer color = BufferUtils.createFloatBuffer(16);
+            GL11.glGetFloat(GL11.GL_CURRENT_COLOR, color);
+
+            // set opacity without changing colors :-)
+            GL11.glColor4f(color.get(0), color.get(1), color.get(2), opacity);
+        }
+
+        GL11.glBegin(GL11.GL_POINTS);
+
         for(char c : s.toLowerCase().toCharArray()){
             switch (c) {
                 case 'a':
@@ -213,6 +242,7 @@ public class Text {
                     x += 8;
                     break;
                 case 'o':
+                case '0':
                     for (int i = 1; i <= 7; i++) {
                         GL11.glVertex2f(x + 1, y + i);
                         GL11.glVertex2f(x + 7, y + i);
@@ -223,21 +253,6 @@ public class Text {
                     }
                     x += 8;
                     break;
-                case '0':
-                    GL11.glVertex2f(x + 1, y);
-                    GL11.glVertex2f(x + 1, y + 8);
-                    GL11.glVertex2f(x + 7, y);
-                    GL11.glVertex2f(x + 7, y + 8);
-
-                    GL11.glVertex2f(x + 1, y + 8);
-                    GL11.glVertex2f(x + 7, y + 8);
-                    GL11.glVertex2f(x + 1, y);
-                    GL11.glVertex2f(x + 7, y);
-
-                    GL11.glVertex2f(x + 1, y + 1);
-                    GL11.glVertex2f(x + 7, y + 7);
-
-                    x += 8;
                 case 'p':
                     for (int i = 0; i <= 8; i++) {
                         GL11.glVertex2f(x + 1, y + i);
@@ -525,6 +540,11 @@ public class Text {
                     GL11.glVertex2f(x + 1, y);
                     x += 2;
                     break;
+                case ':':
+                    GL11.glVertex2f(x, y + 1);
+                    GL11.glVertex2f(x, y + 5);
+                    x += 2;
+                    break;
                 case ',':
                     GL11.glVertex2f(x + 1, y);
                     GL11.glVertex2f(x + 1, y + 1);
@@ -539,9 +559,13 @@ public class Text {
                     break;
             }
         }
-        if (bold) {
-            GL11.glPointSize(1.0f);
-        }
+
         GL11.glEnd();
+
+        GL11.glPointSize(1.0f);
+
+        if (opacity != 1.0f) {
+            GL11.glDisable(GL11.GL_BLEND);
+        }
     }
 }

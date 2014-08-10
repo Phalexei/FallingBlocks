@@ -1,9 +1,9 @@
 package com.github.phalexei.fallingBlocks.Game.Objects;
 
-import com.github.phalexei.fallingBlocks.Rendering.IRenderable;
+import com.github.phalexei.fallingBlocks.Rendering.Renderable;
 import org.lwjgl.opengl.GL11;
 
-public class Block implements IRenderable{
+public class Block extends Renderable {
     private int x,y;
     private float red,green,blue;
 
@@ -36,22 +36,45 @@ public class Block implements IRenderable{
 
         // draw quad
         //TODO : convert x,y to screen coords better
+
+        // this is the square
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(x*25,y*25);
-        GL11.glVertex2f(x*25+25,y*25);
-        GL11.glVertex2f(x*25+25,y*25+25);
-        GL11.glVertex2f(x*25,y*25+25);
+        {
+            GL11.glVertex2f(x * 25, y * 25);
+            GL11.glVertex2f(x * 25 + 25, y * 25);
+            GL11.glVertex2f(x * 25 + 25, y * 25 + 25);
+            GL11.glVertex2f(x * 25, y * 25 + 25);
+        }
         GL11.glEnd();
+
+        GL11.glColor3f(red - 0.2f, green - 0.2f, blue - 0.2f);
+        GL11.glLineWidth(2f);
+
+        // this is the outline, slightly darker
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        {
+            GL11.glVertex2f(x * 25, y * 25);
+            GL11.glVertex2f(x * 25 + 25, y * 25);
+            GL11.glVertex2f(x * 25 + 25, y * 25 + 25);
+            GL11.glVertex2f(x * 25, y * 25 + 25);
+        }
+        GL11.glEnd();
+        GL11.glLineWidth(1f);
+    }
+
+    @Override
+    public ZIndex getZIndex() {
+        return ZIndex.MIDDLE;
     }
 
     public boolean canMove(GameGrid grid, Shape.Direction direction) {
         switch (direction) {
             case DOWN:
-                return grid.isFull(x, y-1);
+                return grid.isEmpty(x, y - 1);
             case LEFT:
-                return grid.isFull(x-1, y);
+                return grid.isEmpty(x - 1, y);
             case RIGHT:
-                return grid.isFull(x+1, y);
+                return grid.isEmpty(x + 1, y);
         }
         return false;
     }
@@ -62,5 +85,9 @@ public class Block implements IRenderable{
 
     public int getX() {
         return x;
+    }
+
+    public boolean collides(GameGrid grid) {
+        return !grid.isEmpty(x, y);
     }
 }

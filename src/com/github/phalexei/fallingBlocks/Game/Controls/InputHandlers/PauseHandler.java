@@ -16,6 +16,9 @@ public class PauseHandler implements InputHandler {
 
     @Override
     public void action(BlockGame game) {
-        game.pause();
+        if (game.getState() == BlockGame.GameState.RUNNING
+                || game.getState() == BlockGame.GameState.PAUSED) {
+            game.pause();
+        }
     }
 }

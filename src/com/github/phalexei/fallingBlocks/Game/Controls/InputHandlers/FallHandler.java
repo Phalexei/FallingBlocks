@@ -16,6 +16,8 @@ public class FallHandler implements InputHandler {
 
     @Override
     public void action(BlockGame game) {
-        game.tryFall();
+        if (game.getState() == BlockGame.GameState.RUNNING) {
+            game.tryFall();
+        }
     }
 }

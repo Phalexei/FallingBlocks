@@ -1,12 +1,12 @@
 package com.github.phalexei.fallingBlocks.Game.Objects;
 
 import com.github.phalexei.fallingBlocks.Game.BlockGame;
-import com.github.phalexei.fallingBlocks.Rendering.IRenderable;
+import com.github.phalexei.fallingBlocks.Rendering.Renderable;
 
 import java.util.List;
 import java.util.Stack;
 
-public class GameGrid implements IRenderable {
+public class GameGrid extends Renderable {
     public static final int HEIGHT = 16;
     public static final int WIDTH = 10;
 
@@ -27,12 +27,13 @@ public class GameGrid implements IRenderable {
         }
     }
 
-    public boolean isFull(int x, int y) {
-        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-            return grid[y][x] == null;
-        } else { // checking for block out of grid
-            return false;
-        }
+    @Override
+    public ZIndex getZIndex() {
+        return ZIndex.BACKGROUND;
+    }
+
+    public boolean isEmpty(int x, int y) {
+        return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && grid[y][x] == null;
     }
 
     public void addBlocks(Shape shape) {
@@ -74,5 +75,13 @@ public class GameGrid implements IRenderable {
             }
         }
         grid[HEIGHT-1] = new Block[WIDTH];
+    }
+
+    public void reset() {
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                grid[i][j] = null;
+            }
+        }
     }
 }

@@ -16,6 +16,8 @@ public class RotateHandler implements InputHandler {
 
     @Override
     public void action(BlockGame game) {
-        game.rotate();
+        if (game.getState() == BlockGame.GameState.RUNNING) {
+            game.rotate();
+        }
     }
 }

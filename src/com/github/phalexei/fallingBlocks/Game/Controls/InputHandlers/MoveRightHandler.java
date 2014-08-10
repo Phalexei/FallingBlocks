@@ -16,6 +16,8 @@ public class MoveRightHandler implements InputHandler {
 
     @Override
     public void action(BlockGame game) {
-        game.moveRight();
+        if (game.getState() == BlockGame.GameState.RUNNING) {
+            game.moveRight();
+        }
     }
 }
