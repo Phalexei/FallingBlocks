@@ -2,10 +2,13 @@ package com.github.phalexei.fallingBlocks.Game;
 
 import com.github.phalexei.fallingBlocks.Game.Objects.GameGrid;
 import com.github.phalexei.fallingBlocks.Game.Objects.Shape;
+import com.github.phalexei.fallingBlocks.Game.UI.GameUI;
 import com.github.phalexei.fallingBlocks.IUpdatable;
 import com.github.phalexei.fallingBlocks.Rendering.Renderer;
 
-public class BlockGame implements IUpdatable {
+import java.util.Stack;
+
+public class FallingBlocksGame implements IUpdatable {
 
     private int ticksSinceLastUpdate;
     private int difficulty;
@@ -19,6 +22,9 @@ public class BlockGame implements IUpdatable {
     private GameState gameState;
     private GameState prevState;
 
+    private int erasingLinesTimer;
+    private Stack<Integer> linesToErase;
+
     public Integer getScore() {
         return score;
     }
@@ -27,9 +33,17 @@ public class BlockGame implements IUpdatable {
         return gameState;
     }
 
+    public void close() {
+        ui.close();
+    }
+
+    public Integer getLines() {
+        return lines;
+    }
+
     public enum GameState {
         RUNNING,
-        ERASING_LINE,
+        ERASING_LINES,
         START,
         PAUSED,
         OVER;
@@ -38,7 +52,7 @@ public class BlockGame implements IUpdatable {
 
         static {
             RUNNING.pausable = true;
-            ERASING_LINE.pausable = true;
+            ERASING_LINES.pausable = true;
             START.pausable = false;
             PAUSED.pausable = false;
             OVER.pausable = false;
@@ -49,7 +63,7 @@ public class BlockGame implements IUpdatable {
         }
     }
 
-    public BlockGame(Renderer renderer) {
+    public FallingBlocksGame(Renderer renderer) {
         if (renderer == null) {
             throw new IllegalArgumentException();
         }
@@ -86,8 +100,20 @@ public class BlockGame implements IUpdatable {
 
     @Override
     public void update(int tick) {
-        if (gameState == GameState.RUNNING) {
-            doGameLoop(tick);
+        switch (gameState) {
+            case RUNNING:
+                doGameLoop(tick);
+                break;
+            case ERASING_LINES:
+                erasingLinesTimer -= tick;
+                if (erasingLinesTimer <= 0) {
+
+                    while(linesToErase.size() > 0) {
+                        grid.deleteRow(linesToErase.pop());
+                    }
+                    gameState = GameState.RUNNING;
+                }
+                break;
         }
     }
 
@@ -137,7 +163,7 @@ public class BlockGame implements IUpdatable {
 
     private void levelup() {
         difficulty++;
-        diffCoef =  difficulty / 15;
+        diffCoef = (Math.sqrt(difficulty) / Math.sqrt(difficulty+10));
     }
 
     public void moveLeft() {
@@ -169,17 +195,42 @@ public class BlockGame implements IUpdatable {
         }
     }
 
-    public void addLines(int nbLines) {
-        lines += nbLines;
-        if (lines / 10 > difficulty) {
+    public void addLines(Stack<Integer> lines) {
+        this.lines += lines.size();
+        if (this.lines / 10 > difficulty) {
             levelup();
         }
 
-        int points = (int) (Math.pow(2,nbLines-1)* 100);
+        int points;
+        switch (lines.size()) {
+            case 1:
+            default:
+                points = 40 * (difficulty + 1);
+                break;
+            case 2:
+                points = 100 * (difficulty + 1);
+                break;
+            case 3:
+                points = 300 * (difficulty + 1);
+                break;
+            case 4:
+                points = 1200 * (difficulty + 1);
+                break;
+        }
 
         score += points;
         ui.addScore(points);
 
+        gameState = GameState.ERASING_LINES;
+        erasingLinesTimer = 1000 + lines.size() * 250;
+        linesToErase = lines;
+
+        grid.setErasing(lines);
+
         ticksSinceLastUpdate = 1000;
+    }
+
+    public char getNextShapeType() {
+        return Shape.getNextShapeType();
     }
 }

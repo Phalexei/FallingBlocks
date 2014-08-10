@@ -1,6 +1,6 @@
 package com.github.phalexei.fallingBlocks.Game.Controls.InputHandlers;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 
 public class RotateHandler implements InputHandler {
     private static RotateHandler instance = null;
@@ -15,8 +15,8 @@ public class RotateHandler implements InputHandler {
     }
 
     @Override
-    public void action(BlockGame game) {
-        if (game.getState() == BlockGame.GameState.RUNNING) {
+    public void action(FallingBlocksGame game) {
+        if (game.getState() == FallingBlocksGame.GameState.RUNNING) {
             game.rotate();
         }
     }

@@ -1,6 +1,6 @@
 package com.github.phalexei.fallingBlocks.Game.Objects;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 import com.github.phalexei.fallingBlocks.Rendering.Renderable;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public class GameGrid extends Renderable {
     public static final int HEIGHT = 16;
     public static final int WIDTH = 10;
 
-    private Block[][] grid;
+    private final Block[][] grid;
 
     public GameGrid() {
         grid = new Block[HEIGHT][WIDTH];
@@ -44,7 +44,7 @@ public class GameGrid extends Renderable {
         }
     }
 
-    public void checkForLines(BlockGame game) {
+    public void checkForLines(FallingBlocksGame game) {
         Stack<Integer> linesFound = new Stack<Integer>();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
@@ -56,19 +56,14 @@ public class GameGrid extends Renderable {
             }
         }
         if (!linesFound.empty()) {
-            game.addLines(linesFound.size());
-
-            do {
-                deleteRow(linesFound.pop());
-            } while(!linesFound.empty());
+            game.addLines(linesFound);
         }
-
     }
 
-    private void deleteRow(Integer row) {
+    public void deleteRow(Integer row) {
         for (; row < HEIGHT-1; row++) {
             grid[row] = grid[row+1];
-            for(Block b : grid[row]) {
+            for (Block b : grid[row]) {
                 if (b != null) {
                     b.move(Shape.Direction.DOWN);
                 }
@@ -81,6 +76,14 @@ public class GameGrid extends Renderable {
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
                 grid[i][j] = null;
+            }
+        }
+    }
+
+    public void setErasing(Stack<Integer> nbLines) {
+        for (Integer row : nbLines) {
+            for (Block b : grid[row]) {
+                b.setErasing(true);
             }
         }
     }

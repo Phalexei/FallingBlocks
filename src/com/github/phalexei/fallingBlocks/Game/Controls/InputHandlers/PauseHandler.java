@@ -1,6 +1,6 @@
 package com.github.phalexei.fallingBlocks.Game.Controls.InputHandlers;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 
 public class PauseHandler implements InputHandler {
     private static PauseHandler instance = null;
@@ -15,9 +15,9 @@ public class PauseHandler implements InputHandler {
     }
 
     @Override
-    public void action(BlockGame game) {
-        if (game.getState() == BlockGame.GameState.RUNNING
-                || game.getState() == BlockGame.GameState.PAUSED) {
+    public void action(FallingBlocksGame game) {
+        if (game.getState() == FallingBlocksGame.GameState.RUNNING
+                || game.getState() == FallingBlocksGame.GameState.PAUSED) {
             game.pause();
         }
     }

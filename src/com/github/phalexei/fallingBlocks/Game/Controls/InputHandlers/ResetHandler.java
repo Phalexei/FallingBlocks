@@ -1,7 +1,6 @@
 package com.github.phalexei.fallingBlocks.Game.Controls.InputHandlers;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
-import com.github.phalexei.fallingBlocks.Main;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 
 public class ResetHandler implements InputHandler {
     private static ResetHandler instance;
@@ -15,9 +14,7 @@ public class ResetHandler implements InputHandler {
         return instance;
     }
     @Override
-    public void action(BlockGame game) {
-        if (game.getState() == BlockGame.GameState.OVER || Main.DEBUG) {
+    public void action(FallingBlocksGame game) {
             game.reset();
-        }
     }
 }

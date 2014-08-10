@@ -18,6 +18,7 @@ public class Renderer implements IUpdatable{
         Display.setDisplayMode(new DisplayMode(720, 800));
         Display.setTitle("Falling Blocks");
         Display.create();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0, 360, 0, 400, 1, -1);

@@ -1,6 +1,6 @@
 package com.github.phalexei.fallingBlocks;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 import com.github.phalexei.fallingBlocks.Game.Controls.Input;
 import com.github.phalexei.fallingBlocks.Rendering.Renderer;
 import org.lwjgl.LWJGLException;
@@ -12,8 +12,7 @@ import java.util.List;
 public class Main {
 
     private long lastFrame;
-    private int fps=60;
-    private List<IUpdatable> updatables;
+    private static final int FPS =60;
 
     public static final boolean DEBUG = true;
 
@@ -23,18 +22,18 @@ public class Main {
         System.out.println("Goodbye wrold!");
     }
 
-    public Main(){
+    private Main(){
         try {
             int delta = getDelta();
-            fps = 60;
 
-            updatables = new ArrayList<IUpdatable>();
+            List<IUpdatable> updatables = new ArrayList<IUpdatable>();
+
             // init OpenGL
             Renderer renderer = new Renderer();
             updatables.add(renderer);
 
             // init game
-            BlockGame game = new BlockGame(renderer);
+            FallingBlocksGame game = new FallingBlocksGame(renderer);
             updatables.add(game);
 
             // init controls
@@ -43,7 +42,7 @@ public class Main {
             // main game loop
             while (!Display.isCloseRequested()) {
 
-                if (!Display.isActive() && game.getState() == BlockGame.GameState.RUNNING) { // window lost focus
+                if (!Display.isActive() && game.getState() == FallingBlocksGame.GameState.RUNNING) { // window lost focus
                     game.pause();
                 }
 
@@ -52,10 +51,11 @@ public class Main {
                 }
 
                 Display.update();
-                Display.sync(fps);
+                Display.sync(FPS);
                 delta = getDelta();
             }
 
+            game.close();
             Display.destroy();
         } catch (LWJGLException e) {
             e.printStackTrace();

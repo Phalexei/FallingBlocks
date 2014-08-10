@@ -1,6 +1,6 @@
 package com.github.phalexei.fallingBlocks.Game.Controls.InputHandlers;
 
-import com.github.phalexei.fallingBlocks.Game.BlockGame;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 
 public class StartHandler implements InputHandler {
     private static StartHandler instance;
@@ -14,8 +14,8 @@ public class StartHandler implements InputHandler {
         return instance;
     }
     @Override
-    public void action(BlockGame game) {
-        if (game.getState() == BlockGame.GameState.START) {
+    public void action(FallingBlocksGame game) {
+        if (game.getState() == FallingBlocksGame.GameState.START) {
             game.start();
         }
     }
