@@ -2,18 +2,25 @@ package com.github.phalexei.fallingBlocks.Game.Objects;
 
 import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 import com.github.phalexei.fallingBlocks.Rendering.Renderable;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Stack;
 
 public class GameGrid extends Renderable {
-    public static final int HEIGHT = 16;
+    public static final int HEIGHT = 17;
     public static final int WIDTH = 10;
 
+    private boolean showGrid;
     private final Block[][] grid;
 
     public GameGrid() {
         grid = new Block[HEIGHT][WIDTH];
+        showGrid = false;
+    }
+
+    public void toggleShowGrid() {
+        showGrid ^= true;
     }
 
     @Override
@@ -25,6 +32,39 @@ public class GameGrid extends Renderable {
                 }
             }
         }
+
+        if (showGrid) {
+            drawGrid();
+        }
+    }
+
+    private void drawGrid() {
+        for (int col = 0; col < HEIGHT; col++) {
+            for (int row = 0; row < WIDTH; row++) {
+                drawGridPart(row, col);
+            }
+        }
+    }
+
+    private void drawGridPart(int row, int col) {
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.1f);
+
+        int x, y, size;
+        x = row * 25;
+        y = col * 25;
+        size = 25;
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        {
+            GL11.glVertex2f(x, y);
+            GL11.glVertex2f(x + size, y);
+            GL11.glVertex2f(x + size, y + size);
+            GL11.glVertex2f(x, y + size);
+        }
+        GL11.glEnd();
     }
 
     @Override
@@ -44,7 +84,8 @@ public class GameGrid extends Renderable {
         }
     }
 
-    public void checkForLines(FallingBlocksGame game) {
+    public boolean checkForLines(FallingBlocksGame game) {
+        boolean ret = false;
         Stack<Integer> linesFound = new Stack<Integer>();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
@@ -56,8 +97,10 @@ public class GameGrid extends Renderable {
             }
         }
         if (!linesFound.empty()) {
+            ret = true;
             game.addLines(linesFound);
         }
+        return ret;
     }
 
     public void deleteRow(Integer row) {

@@ -1,7 +1,7 @@
 package com.github.phalexei.fallingBlocks.Game.Controls;
 
-import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 import com.github.phalexei.fallingBlocks.Game.Controls.InputHandlers.*;
+import com.github.phalexei.fallingBlocks.Game.FallingBlocksGame;
 import com.github.phalexei.fallingBlocks.IUpdatable;
 import org.lwjgl.input.Keyboard;
 
@@ -24,6 +24,8 @@ public class Input implements IUpdatable {
         handlers.put(Keyboard.KEY_P, PauseHandler.getInstance());
         handlers.put(Keyboard.KEY_R, ResetHandler.getInstance());
         handlers.put(Keyboard.KEY_SPACE, StartHandler.getInstance());
+        handlers.put(Keyboard.KEY_F1, ToggleShowGridHandler.getInstance());
+        handlers.put(Keyboard.KEY_ESCAPE, ExitHandler.getInstance());
     }
 
     public void update(int tick) {

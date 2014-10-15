@@ -1,11 +1,14 @@
 package com.github.phalexei.fallingBlocks.Game;
 
+import com.github.phalexei.fallingBlocks.Game.Controls.Input;
 import com.github.phalexei.fallingBlocks.Game.Objects.GameGrid;
 import com.github.phalexei.fallingBlocks.Game.Objects.Shape;
 import com.github.phalexei.fallingBlocks.Game.UI.GameUI;
 import com.github.phalexei.fallingBlocks.IUpdatable;
 import com.github.phalexei.fallingBlocks.Rendering.Renderer;
+import com.github.phalexei.fallingBlocks.Sound.Sound;
 
+import java.util.List;
 import java.util.Stack;
 
 public class FallingBlocksGame implements IUpdatable {
@@ -19,10 +22,11 @@ public class FallingBlocksGame implements IUpdatable {
     private GameGrid grid;
     private Shape fallingShape;
     private Renderer renderer;
+    private Sound sound;
     private GameState gameState;
     private GameState prevState;
 
-    private int erasingLinesTimer;
+    private int stateTimer;
     private Stack<Integer> linesToErase;
 
     public Integer getScore() {
@@ -33,9 +37,6 @@ public class FallingBlocksGame implements IUpdatable {
         return gameState;
     }
 
-    public void close() {
-        ui.close();
-    }
 
     public Integer getLines() {
         return lines;
@@ -46,7 +47,8 @@ public class FallingBlocksGame implements IUpdatable {
         ERASING_LINES,
         START,
         PAUSED,
-        OVER;
+        OVER,
+        EXITING;
 
         private boolean pausable;
 
@@ -56,6 +58,7 @@ public class FallingBlocksGame implements IUpdatable {
             START.pausable = false;
             PAUSED.pausable = false;
             OVER.pausable = false;
+            EXITING.pausable = false;
         }
 
         boolean isPausable() {
@@ -63,11 +66,21 @@ public class FallingBlocksGame implements IUpdatable {
         }
     }
 
-    public FallingBlocksGame(Renderer renderer) {
+    public FallingBlocksGame(Renderer renderer, List<IUpdatable> updatables) {
         if (renderer == null) {
             throw new IllegalArgumentException();
         }
+
         this.renderer = renderer;
+        updatables.add(renderer);
+
+        updatables.add(this);
+
+        // init controls
+        updatables.add(new Input(this));
+
+        // init sounds
+        sound = new Sound(this);
 
         grid = new GameGrid();
         renderer.addRenderable(grid);
@@ -82,6 +95,24 @@ public class FallingBlocksGame implements IUpdatable {
         gameState = GameState.RUNNING;
     }
 
+    public void exit() {
+        if (gameState != GameState.EXITING) {
+            gameState = GameState.EXITING;
+            stateTimer = 2000;
+            renderer.removeRenderable(grid);
+            renderer.removeRenderable(fallingShape);
+        }
+    }
+
+    public boolean isCloseRequested() {
+        return (gameState == GameState.EXITING && stateTimer <= 0);
+    }
+
+    public void close() {
+        ui.close();
+        sound.close();
+    }
+
     public void reset() {
         gameState = GameState.START;
         ticksSinceLastUpdate = 1000;
@@ -93,6 +124,7 @@ public class FallingBlocksGame implements IUpdatable {
         fallingShape = null;
         gameState = GameState.START;
         prevState = null;
+        sound.stopPlayingLineErase();
 
         grid.reset();
         ui.reset();
@@ -105,14 +137,18 @@ public class FallingBlocksGame implements IUpdatable {
                 doGameLoop(tick);
                 break;
             case ERASING_LINES:
-                erasingLinesTimer -= tick;
-                if (erasingLinesTimer <= 0) {
+                stateTimer -= tick;
+                if (stateTimer <= 0) {
 
                     while(linesToErase.size() > 0) {
                         grid.deleteRow(linesToErase.pop());
                     }
                     gameState = GameState.RUNNING;
+                    sound.stopPlayingLineErase();
                 }
+                break;
+            case EXITING:
+                stateTimer -= tick;
                 break;
         }
     }
@@ -125,6 +161,9 @@ public class FallingBlocksGame implements IUpdatable {
             if (fallingShape == null) {
                 if (!spawnNewShape()) {
                     gameState = GameState.OVER;
+                    sound.playGameOver();
+                  /*  if (score)
+                  */
                 }
             } else {
                 tryFall();
@@ -149,9 +188,14 @@ public class FallingBlocksGame implements IUpdatable {
                 fallingShape.fall();
             } else {
                 grid.addBlocks(fallingShape);
-                grid.checkForLines(this);
+                if (!grid.checkForLines(this)) {
+                    // do not play sound if we are deleting lines
+                    sound.playBlockDrop();
+                }
                 renderer.removeRenderable(fallingShape);
                 fallingShape = null;
+
+                ticksSinceLastUpdate = 1000;
             }
         }
     }
@@ -222,15 +266,18 @@ public class FallingBlocksGame implements IUpdatable {
         ui.addScore(points);
 
         gameState = GameState.ERASING_LINES;
-        erasingLinesTimer = 1000 + lines.size() * 250;
+        stateTimer = 1000 + lines.size() * 250;
         linesToErase = lines;
 
+        sound.startPlayingLineErase(lines.size() == 4);
         grid.setErasing(lines);
-
-        ticksSinceLastUpdate = 1000;
     }
 
     public char getNextShapeType() {
         return Shape.getNextShapeType();
+    }
+
+    public void toggleShowGrid() {
+        grid.toggleShowGrid();
     }
 }

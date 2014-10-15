@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 //saucecode's text rendering in opengl 1.1
 //edited by kadence.
 //adapted by Phalexei.
+// TODO: use bitmap for font, srsly
 
 public class Text {
 
@@ -25,12 +26,11 @@ public class Text {
         int startX = x;
 
         if (bold) {
-            GL11.glPointSize(2f);
+            GL11.glPointSize(2.5f);
         } else {
             GL11.glPointSize(1.5f);
         }
 
-        //TODO: handle opacity
         if (opacity != 1.0f) {
             // enable opacity
             GL11.glEnable(GL11.GL_BLEND);

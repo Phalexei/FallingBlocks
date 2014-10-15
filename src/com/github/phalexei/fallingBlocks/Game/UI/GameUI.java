@@ -6,14 +6,16 @@ import com.github.phalexei.fallingBlocks.Game.Objects.Shapes.*;
 import com.github.phalexei.fallingBlocks.Rendering.Renderable;
 import com.github.phalexei.fallingBlocks.Rendering.Text;
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GameUI extends Renderable {
 
@@ -30,7 +32,7 @@ public class GameUI extends Renderable {
         toRemove = new ArrayList<Map.Entry<Integer, Float>>();
 
         try {
-            inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/controls/WhiteSmall.png"));
+            inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/controls/WhiteSmallNew.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,21 +44,24 @@ public class GameUI extends Renderable {
 
     @Override
     public void render(int tick) {
-        drawHUD();
 
         switch (game.getState()) {
             case START:
-                GL11.glColor3f(1, 1, 1);
+                drawHUD();
+                GL11.glColor3f(1.0f, 0.0f, 0.2f);
                 Text.drawString("FALLING BLOCKS", 75, 220, true);
+                GL11.glColor3f(1.0f, 1.0f, 1.0f);
                 Text.drawString("Press SPACE to start", 48, 200);
                 drawScore(0);
                 break;
             case RUNNING:
             case ERASING_LINES:
+                drawHUD();
                 drawNextShape(tick);
                 drawScore(tick);
                 break;
             case PAUSED:
+                drawHUD();
                 drawScore(0);
                 greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
@@ -64,13 +69,25 @@ public class GameUI extends Renderable {
                 Text.drawString("Press P to continue", 48, 200);
                 break;
             case OVER:
+                drawHUD();
                 greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
                 Text.drawString("GAME OVER", 75, 220, true);
                 Text.drawString("Press R to restart", 48, 200);
                 drawScore(0);
                 break;
+            case EXITING:
+                drawCredits();
+                break;
         }
+    }
+
+    private void drawCredits() {
+        GL11.glColor3f(1.0f, 0.0f, 0.2f);
+        Text.drawString("FALLING BLOCKS", 130, 220, true);
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+        Text.drawString("A GAME BY PHALEXEI", 115, 200);
+        Text.drawString("THANK YOU FOR PLAYING", 103, 180);
     }
 
     private void drawNextShape(int tick) {
@@ -123,7 +140,7 @@ public class GameUI extends Renderable {
 
         // display level
         Text.drawString("LEVEL:", 275, 140, true);
-        Text.drawString(((Integer)(game.getLines() / 10)).toString(), 275, 130);
+        Text.drawString(((Integer) (game.getLines() / 10)).toString(), 275, 130);
 
         float offset;
 
@@ -193,7 +210,10 @@ public class GameUI extends Renderable {
 
         drawInputs();
 
-        Text.drawString("FALLING BLOCKS\nA game by\nPhalexei", 252, 380);
+        GL11.glColor3f(1.0f, 0.0f, 0.2f);
+        Text.drawString("FALLING BLOCKS", 252, 380);
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+        Text.drawString("A game by\nPhalexei", 252, 370);
     }
 
     private void drawInputs() {

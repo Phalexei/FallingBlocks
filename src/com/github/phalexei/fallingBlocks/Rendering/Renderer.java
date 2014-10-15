@@ -10,18 +10,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Renderer implements IUpdatable{
+public class Renderer implements IUpdatable {
 
     private List<Renderable> renderables;
 
     public Renderer() throws LWJGLException {
-        Display.setDisplayMode(new DisplayMode(720, 800));
+        Display.setDisplayMode(new DisplayMode(740, 800));
         Display.setTitle("Falling Blocks");
         Display.create();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, 360, 0, 400, 1, -1);
+        GL11.glOrtho(0, 370, 0, 400, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
         renderables = new ArrayList<Renderable>();
