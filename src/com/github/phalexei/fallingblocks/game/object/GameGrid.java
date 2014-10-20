@@ -65,6 +65,8 @@ public class GameGrid extends Renderable {
             GL11.glVertex2f(x, y + size);
         }
         GL11.glEnd();
+
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override

@@ -21,8 +21,10 @@ public class Renderer implements IUpdatable {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, 370, 0, 400, 1, -1);
+        GL11.glOrtho(0, 370, 400, 0, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         renderables = new ArrayList<Renderable>();
     }

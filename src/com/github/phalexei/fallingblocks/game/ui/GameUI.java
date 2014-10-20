@@ -26,11 +26,14 @@ public class GameUI extends Renderable {
     private Shape nextShape;
 
     private Texture inputsTexture;
+    private Text text;
 
     public GameUI(FallingBlocksGame game) {
-        pointsToAdd = new ArrayList<Map.Entry<Integer, Float>>();
+        pointsToAdd = new ArrayList<>();
         this.game = game;
-        toRemove = new ArrayList<Map.Entry<Integer, Float>>();
+        toRemove = new ArrayList<>();
+
+        text = new Text();
 
         try {
             inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/controls/WhiteSmallNew.png"));
@@ -45,38 +48,38 @@ public class GameUI extends Renderable {
 
     @Override
     public void render(int tick) {
-
         switch (game.getState()) {
             case START:
-                drawHUD();
                 GL11.glColor3f(1.0f, 0.0f, 0.2f);
-                Text.drawString("FALLING BLOCKS", 75, 220, true);
+                text.drawString("FALLING BLOCKS", 75, 180);
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
-                Text.drawString("Press SPACE to start", 48, 200);
+                text.drawString("Press SPACE to start", 48, 200);
                 drawScore(0);
+                drawHUD();
                 break;
             case RUNNING:
             case ERASING_LINES:
-                drawHUD();
                 drawNextShape(tick);
                 drawScore(tick);
+                drawHUD();
                 break;
             case PAUSED:
-                drawHUD();
                 drawScore(0);
                 greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
-                Text.drawString("GAME PAUSED", 75, 220, true);
-                Text.drawString("Press P to continue", 48, 200);
+                text.drawString("GAME PAUSED", 75, 180, true);
+                text.drawString("Press P to continue", 48, 200);
+                drawHUD();
                 break;
             case OVER:
                 drawHUD();
                 greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
-                Text.drawString("GAME OVER", 75, 320, true);
-                Text.drawString("Press R to restart", 48, 300);
+                text.drawString("GAME OVER", 75, 80, true);
+                text.drawString("Press R to restart", 48, 100);
                 drawScore(0);
                 drawHighScore();
+                drawHUD();
                 break;
             case EXITING:
                 drawCredits();
@@ -86,21 +89,21 @@ public class GameUI extends Renderable {
 
     private void drawCredits() {
         GL11.glColor3f(1.0f, 0.0f, 0.2f);
-        Text.drawString("FALLING BLOCKS", 130, 220, true);
+        text.drawString("FALLING BLOCKS", 130, 180, true);
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        Text.drawString("A GAME BY PHALEXEI", 115, 200);
-        Text.drawString("THANK YOU FOR PLAYING", 103, 180);
+        text.drawString("A GAME BY PHALEXEI", 115, 200);
+        text.drawString("THANK YOU FOR PLAYING", 103, 220);
     }
 
     private void drawHighScore() {
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
-        Text.drawString("HIGH SCORES", 73, 250);
+        text.drawString("HIGH SCORES", 73, 150);
 
-        int y = 230;
+        int y = 170;
         for (Score s : game.getHighScore()) {
-            Text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
-            y -= 20;
+            text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
+            y += 20;
         }
     }
 
@@ -109,26 +112,26 @@ public class GameUI extends Renderable {
             nextShapeType = game.getNextShapeType();
             switch (nextShapeType) {
                 case 'i':
-                    nextShape = new IShape(300, 310, true);
+                    nextShape = new IShape(300, 90, true);
                     break;
                 case 'j':
-                    nextShape = new JShape(300, 310, true);
+                    nextShape = new JShape(300, 90, true);
                     break;
                 case 'l':
-                    nextShape = new LShape(300, 311, true);
+                    nextShape = new LShape(300, 89, true);
                     break;
                 case 's':
-                    nextShape = new SShape(300, 311, true);
+                    nextShape = new SShape(300, 89, true);
                     break;
                 case 't':
-                    nextShape = new TShape(300, 311, true);
+                    nextShape = new TShape(300, 89, true);
                     break;
                 case 'o':
-                    nextShape = new OShape(300, 310, true);
+                    nextShape = new OShape(300, 90, true);
                     break;
                 case 'z':
                 default:
-                    nextShape = new ZShape(300, 311, true);
+                    nextShape = new ZShape(300, 89, true);
                     break;
             }
         }
@@ -145,24 +148,24 @@ public class GameUI extends Renderable {
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
         // display current score
-        Text.drawString("SCORE:", 275, 80, true);
-        Text.drawString(game.getScore().toString(), 275, 70);
+        text.drawString("SCORE:", 275, 320, true);
+        text.drawString(game.getScore().toString(), 275, 330);
 
         // display lines
-        Text.drawString("LINES:", 275, 110, true);
-        Text.drawString(Integer.toString(game.getLines()), 275, 100);
+        text.drawString("LINES:", 275, 290, true);
+        text.drawString(Integer.toString(game.getLines()), 275, 300);
 
         // display level
-        Text.drawString("LEVEL:", 275, 140, true);
-        Text.drawString(Integer.toString(game.getLines() / 10), 275, 130);
+        text.drawString("LEVEL:", 275, 260, true);
+        text.drawString(Integer.toString(game.getLines() / 10), 275, 270);
 
         float offset;
 
         // draw score slowly descending and fading
         for (Map.Entry<Integer, Float> points : pointsToAdd) {
             offset = points.getValue();
-            Text.drawString(points.getKey().toString(), 275, (int) (60 - offset), 1.0f - (offset / 60));
-            points.setValue(offset + tick / 80f);
+            text.drawString(points.getKey().toString(), 275, (int) (340 + offset), 1.0f - (offset / 60));
+            points.setValue(offset + tick / 120f);
 
             // schedule to clear from list when offscren
             if (points.getValue() > 70) {
@@ -213,53 +216,48 @@ public class GameUI extends Renderable {
         // Draw square for showing next piece
         GL11.glBegin(GL11.GL_LINE_STRIP);
         {
-            GL11.glVertex2i(280, 300 + 50);
-            GL11.glVertex2i(280 + 50, 300 + 50);
-            GL11.glVertex2i(280 + 50, 300);
-            GL11.glVertex2i(280, 300);
-            GL11.glVertex2i(280, 300 + 50);
+            GL11.glVertex2i(280, 100 - 50);
+            GL11.glVertex2i(280 + 50, 100 - 50);
+            GL11.glVertex2i(280 + 50, 100);
+            GL11.glVertex2i(280, 100);
+            GL11.glVertex2i(280, 100 - 50);
         }
         GL11.glEnd();
         GL11.glPointSize(1.0f);
 
-        drawInputs();
-
         GL11.glColor3f(1.0f, 0.0f, 0.2f);
-        Text.drawString("FALLING BLOCKS", 252, 380);
+        text.drawString("FALLING BLOCKS", 252, 20);
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        Text.drawString("A game by\nPhalexei", 252, 370);
+        text.drawString("A game by\nPhalexei", 252, 30);
+
+        drawInputs();
     }
 
     private void drawInputs() {
         // Draw input map
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Color.white.bind();
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, inputsTexture.getTextureID());
-
 
         GL11.glBegin(GL11.GL_QUADS);
         {
             GL11.glTexCoord2f(0, 0);
-            GL11.glVertex2i(244, 155 + 128);
-            //GL11.glVertex2f(100, 100 + inputsTexture.getTextureHeight());
+            GL11.glVertex2i(244, 245 - 128);
 
             GL11.glTexCoord2f(1, 0);
-            //GL11.glVertex2f(100 + inputsTexture.getTextureWidth(), 100 + inputsTexture.getTextureHeight());
-            GL11.glVertex2i(244 + 128, 155 + 128);
+            GL11.glVertex2i(244 + 128, 245 - 128);
 
             GL11.glTexCoord2f(1, 1);
-            //GL11.glVertex2f(100 + inputsTexture.getTextureWidth(), 100);
-            GL11.glVertex2i(244 + 128, 155);
+            GL11.glVertex2i(244 + 128, 245);
 
             GL11.glTexCoord2f(0, 1);
-            //GL11.glVertex2f(100, 100);
-            GL11.glVertex2i(244, 155);
+            GL11.glVertex2i(244, 245);
         }
         GL11.glEnd();
         // Unbind texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
     public void reset() {

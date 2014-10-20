@@ -25,7 +25,7 @@ public class Block extends Renderable {
             this.size = 10;
             this.ratio = 10;
             this.x = 300 + (300 - x) * this.ratio;
-            this.y = 310 + (310 - y) * this.ratio;
+            this.y = 300 + (90 - y) * this.ratio;
         } else {
             this.size = 25;
             this.ratio = 25;
@@ -69,15 +69,15 @@ public class Block extends Renderable {
 
         // compute screen coords only once per render ;-)
         float screenX = preview ? x /*+ 0.5f * ratio */: x * ratio;
-        float screenY = preview ? y /*+ 0.5f * ratio */: y * ratio;
+        float screenY = 400 - (preview ? y /*+ 0.5f * ratio */: y * ratio);
 
         // this is the square
         GL11.glBegin(GL11.GL_QUADS);
         {
             GL11.glVertex2f(screenX, screenY);
             GL11.glVertex2f(screenX + size, screenY);
-            GL11.glVertex2f(screenX + size, screenY + size);
-            GL11.glVertex2f(screenX, screenY + size);
+            GL11.glVertex2f(screenX + size, screenY - size);
+            GL11.glVertex2f(screenX, screenY - size);
         }
         GL11.glEnd();
 
@@ -90,8 +90,9 @@ public class Block extends Renderable {
         {
             GL11.glVertex2f(screenX, screenY);
             GL11.glVertex2f(screenX + size, screenY);
-            GL11.glVertex2f(screenX + size, screenY + size);
-            GL11.glVertex2f(screenX, screenY + size);
+            GL11.glVertex2f(screenX + size, screenY - size);
+            GL11.glVertex2f(screenX, screenY - size);
+            GL11.glVertex2f(screenX, screenY);
         }
         GL11.glEnd();
         GL11.glLineWidth(1f);
