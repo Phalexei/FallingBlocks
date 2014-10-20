@@ -1,6 +1,7 @@
 package com.github.phalexei.fallingblocks.game.ui;
 
 import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
+import com.github.phalexei.fallingblocks.game.Score;
 import com.github.phalexei.fallingblocks.game.object.Shape;
 import com.github.phalexei.fallingblocks.game.object.shape.*;
 import com.github.phalexei.fallingblocks.rendering.Renderable;
@@ -72,9 +73,10 @@ public class GameUI extends Renderable {
                 drawHUD();
                 greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
-                Text.drawString("GAME OVER", 75, 220, true);
-                Text.drawString("Press R to restart", 48, 200);
+                Text.drawString("GAME OVER", 75, 320, true);
+                Text.drawString("Press R to restart", 48, 300);
                 drawScore(0);
+                drawHighScore();
                 break;
             case EXITING:
                 drawCredits();
@@ -88,6 +90,18 @@ public class GameUI extends Renderable {
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         Text.drawString("A GAME BY PHALEXEI", 115, 200);
         Text.drawString("THANK YOU FOR PLAYING", 103, 180);
+    }
+
+    private void drawHighScore() {
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+
+        Text.drawString("HIGH SCORES", 73, 250);
+
+        int y = 230;
+        for (Score s : game.getHighScore()) {
+            Text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
+            y -= 20;
+        }
     }
 
     private void drawNextShape(int tick) {

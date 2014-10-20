@@ -9,10 +9,8 @@ import com.github.phalexei.fallingblocks.IUpdatable;
 import com.github.phalexei.fallingblocks.rendering.Renderer;
 import com.github.phalexei.fallingblocks.sound.Sound;
 
-import java.io.IOException;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -29,11 +27,13 @@ public class FallingBlocksGame implements IUpdatable {
     private Renderer renderer;
     private Sound sound;
     private Save save;
+    private ArrayList<Score> highScores;
     private GameState gameState;
     private GameState prevState;
 
     private int stateTimer;
     private Stack<Integer> linesToErase;
+    private boolean needScoreName;
 
     public Integer getScore() {
         return score;
@@ -46,6 +46,10 @@ public class FallingBlocksGame implements IUpdatable {
 
     public int getLines() {
         return lines;
+    }
+
+    public ArrayList<Score> getHighScore() {
+        return highScores;
     }
 
     public enum GameState {
@@ -171,8 +175,13 @@ public class FallingBlocksGame implements IUpdatable {
                     gameState = GameState.OVER;
                     sound.playGameOver();
                     if (score > 0) {
-                        save.addScore(new Score("test", score));
+                        //TODO: get user name :'(
+                        Score newScore = new Score("test", score);
+                        if (save.addScore(newScore)) {
+                            needScoreName = true;
+                        }
                     }
+                    highScores = save.getHighScores();
                 }
             } else {
                 tryFall();
