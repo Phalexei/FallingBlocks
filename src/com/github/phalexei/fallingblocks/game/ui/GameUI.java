@@ -33,7 +33,8 @@ public class GameUI extends Renderable {
         this.game = game;
         toRemove = new ArrayList<>();
 
-        text = new Text();
+        text = new Text();*$
+                sfhidsdpfo
 
         try {
             inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/controls/WhiteSmallNew.png"));
