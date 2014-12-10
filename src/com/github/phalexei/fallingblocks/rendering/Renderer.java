@@ -12,13 +12,15 @@ import java.util.List;
 
 public class Renderer implements IUpdatable {
 
-    private List<Renderable> renderables;
+    private static final int FPS = 60;
+    private final List<Renderable> renderables;
 
     public Renderer() throws LWJGLException {
         Display.setDisplayMode(new DisplayMode(740, 800));
         Display.setTitle("Falling Blocks");
         Display.create();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0, 370, 400, 0, 1, -1);
@@ -26,23 +28,27 @@ public class Renderer implements IUpdatable {
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        renderables = new ArrayList<Renderable>();
+        this.renderables = new ArrayList<>();
     }
 
-    public void update(int tick) {
+    public void update(final int tick) {
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        for (Renderable r : renderables)
+        for (final Renderable r : this.renderables) {
             r.render(tick);
+        }
+
+        Display.update();
+        Display.sync(FPS);
     }
 
-    public void addRenderable(Renderable renderable) {
-        renderables.add(renderable);
-        Collections.sort(renderables);
+    public void addRenderable(final Renderable renderable) {
+        this.renderables.add(renderable);
+        Collections.sort(this.renderables);
     }
 
-    public void removeRenderable(Renderable renderable) {
-        renderables.remove(renderable);
+    public void removeRenderable(final Renderable renderable) {
+        this.renderables.remove(renderable);
     }
 }

@@ -1,11 +1,11 @@
 package com.github.phalexei.fallingblocks.game;
 
+import com.github.phalexei.fallingblocks.IUpdatable;
 import com.github.phalexei.fallingblocks.file.Save;
 import com.github.phalexei.fallingblocks.game.control.Input;
 import com.github.phalexei.fallingblocks.game.object.GameGrid;
 import com.github.phalexei.fallingblocks.game.object.Shape;
 import com.github.phalexei.fallingblocks.game.ui.GameUI;
-import com.github.phalexei.fallingblocks.IUpdatable;
 import com.github.phalexei.fallingblocks.rendering.Renderer;
 import com.github.phalexei.fallingblocks.sound.Sound;
 
@@ -21,12 +21,12 @@ public class FallingBlocksGame implements IUpdatable {
     private int lines;
     private int score;
     private double diffCoef;
-    private GameUI ui;
-    private GameGrid grid;
+    private final GameUI ui;
+    private final GameGrid grid;
     private Shape fallingShape;
-    private Renderer renderer;
-    private Sound sound;
-    private Save save;
+    private final Renderer renderer;
+    private final Sound sound;
+    private final Save save;
     private ArrayList<Score> highScores;
     private GameState gameState;
     private GameState prevState;

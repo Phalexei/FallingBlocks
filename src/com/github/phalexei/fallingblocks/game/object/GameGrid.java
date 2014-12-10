@@ -15,12 +15,12 @@ public class GameGrid extends Renderable {
     private final Block[][] grid;
 
     public GameGrid() {
-        grid = new Block[HEIGHT][WIDTH];
-        showGrid = false;
+        this.grid = new Block[HEIGHT][WIDTH];
+        this.showGrid = false;
     }
 
     public void toggleShowGrid() {
-        showGrid ^= true;
+        this.showGrid ^= true;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GameGrid extends Renderable {
             }
         }
 
-        if (showGrid) {
+        if (this.showGrid) {
             drawGrid();
         }
     }
@@ -41,12 +41,12 @@ public class GameGrid extends Renderable {
     private void drawGrid() {
         for (int col = 0; col < HEIGHT; col++) {
             for (int row = 0; row < WIDTH; row++) {
-                drawGridPart(row, col);
+                this.drawGridPart(row, col);
             }
         }
     }
 
-    private void drawGridPart(int row, int col) {
+    private void drawGridPart(final int row, final int col) {
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -74,21 +74,21 @@ public class GameGrid extends Renderable {
         return ZIndex.BACKGROUND;
     }
 
-    public boolean isEmpty(int x, int y) {
+    public boolean isEmpty(final int x, final int y) {
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && grid[y][x] == null;
     }
 
-    public void addBlocks(Shape shape) {
+    public void addBlocks(final Shape shape) {
         List<Block> newBlocks = shape.getBlocks();
 
         for (Block b : newBlocks) {
-            grid[b.getY()][b.getX()] = b;
+            this.grid[b.getY()][b.getX()] = b;
         }
     }
 
-    public boolean checkForLines(FallingBlocksGame game) {
+    public boolean checkForLines(final FallingBlocksGame game) {
         boolean ret = false;
-        Stack<Integer> linesFound = new Stack<Integer>();
+        final Stack<Integer> linesFound = new Stack<>();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
                 if (grid[row][col] == null) {
@@ -107,25 +107,25 @@ public class GameGrid extends Renderable {
 
     public void deleteRow(int row) {
         for (; row < HEIGHT-1; row++) {
-            grid[row] = grid[row+1];
-            for (Block b : grid[row]) {
+            this.grid[row] = this.grid[row+1];
+            for (Block b : this.grid[row]) {
                 if (b != null) {
                     b.move(Shape.Direction.DOWN);
                 }
             }
         }
-        grid[HEIGHT-1] = new Block[WIDTH];
+        this.grid[HEIGHT-1] = new Block[WIDTH];
     }
 
     public void reset() {
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                grid[i][j] = null;
+                this.grid[i][j] = null;
             }
         }
     }
 
-    public void setErasing(Stack<Integer> nbLines) {
+    public void setErasing(final Stack<Integer> nbLines) {
         for (int row : nbLines) {
             for (Block b : grid[row]) {
                 b.setErasing(true);

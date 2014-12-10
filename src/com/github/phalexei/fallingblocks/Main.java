@@ -11,7 +11,6 @@ import java.util.List;
 public class Main {
 
     private long lastFrame;
-    private static final int FPS =60;
 
     public static void main(String[] args){
         new Main();
@@ -41,8 +40,6 @@ public class Main {
                     u.update(delta);
                 }
 
-                Display.update();
-                Display.sync(FPS);
                 delta = getDelta();
             }
 
