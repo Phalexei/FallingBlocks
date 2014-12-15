@@ -17,7 +17,7 @@ public class ToggleShowGridHandler implements InputHandler {
     }
 
     @Override
-    public void action(FallingBlocksGame game) {
+    public void action(final FallingBlocksGame game) {
         game.toggleShowGrid();
     }
 }

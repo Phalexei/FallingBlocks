@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ZShape extends Shape {
-    public ZShape(int x, int y) {
+    public ZShape(final int x, final int y) {
         super(x, y);
     }
 
-    public ZShape(int x, int y, boolean preview) {
+    public ZShape(final int x, final int y, final boolean preview) {
         super(x, y, preview);
     }
 
     @Override
-    protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<>(4);
+    protected List<Block> getNewBlocks(final boolean preview) {
+        final List<Block> newBlocks = new ArrayList<>(4);
 
         switch (this.getNextOrientation()) {
             case DOWN:

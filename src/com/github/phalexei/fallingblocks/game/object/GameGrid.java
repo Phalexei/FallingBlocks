@@ -23,9 +23,9 @@ public class GameGrid extends Renderable {
     }
 
     @Override
-    public void render(int tick) {
-        for (Block[] row : this.grid) {
-            for (Block b : row) {
+    public void render(final int tick) {
+        for (final Block[] row : this.grid) {
+            for (final Block b : row) {
                 if (b != null) {
                     b.render(tick);
                 }
@@ -57,7 +57,9 @@ public class GameGrid extends Renderable {
 
         GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.1f);
 
-        int x, y, size;
+        final int x;
+        final int y;
+        final int size;
         x = row * 25;
         y = col * 25;
         size = 25;
@@ -78,9 +80,9 @@ public class GameGrid extends Renderable {
     }
 
     public void addBlocks(final Shape shape) {
-        List<Block> newBlocks = shape.getBlocks();
+        final List<Block> newBlocks = shape.getBlocks();
 
-        for (Block b : newBlocks) {
+        for (final Block b : newBlocks) {
             this.grid[b.getY()][b.getX()] = b;
         }
     }
@@ -107,7 +109,7 @@ public class GameGrid extends Renderable {
     public void deleteRow(int row) {
         for (; row < HEIGHT - 1; row++) {
             this.grid[row] = this.grid[row + 1];
-            for (Block b : this.grid[row]) {
+            for (final Block b : this.grid[row]) {
                 if (b != null) {
                     b.move(Shape.Direction.DOWN);
                 }
@@ -125,8 +127,8 @@ public class GameGrid extends Renderable {
     }
 
     public void setErasing(final Stack<Integer> nbLines) {
-        for (int row : nbLines) {
-            for (Block b : this.grid[row]) {
+        for (final int row : nbLines) {
+            for (final Block b : this.grid[row]) {
                 b.setErasing(true);
             }
         }

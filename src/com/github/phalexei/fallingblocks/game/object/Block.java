@@ -13,7 +13,7 @@ public class Block extends Renderable {
     private boolean blinkingState;
     private int erasingTimer;
 
-    public Block(int x, int y, float red, float green, float blue, boolean preview) {
+    public Block(final int x, final int y, final float red, final float green, final float blue, final boolean preview) {
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -33,7 +33,7 @@ public class Block extends Renderable {
         }
     }
 
-    public void move(Shape.Direction dir) {
+    public void move(final Shape.Direction dir) {
         switch (dir) {
             case DOWN:
                 this.y--;
@@ -48,7 +48,7 @@ public class Block extends Renderable {
     }
 
     @Override
-    public void render(int tick) {
+    public void render(final int tick) {
         // set the color of the quad (R,G,B,A)
         // if this block is being erased, blink it!
         if (this.erasing) {
@@ -67,8 +67,8 @@ public class Block extends Renderable {
         }
 
         // compute screen coords only once per render ;-)
-        float screenX = this.preview ? this.x /*+ 0.5f * ratio */ : this.x * this.ratio;
-        float screenY = 400 - (this.preview ? this.y /*+ 0.5f * ratio */ : this.y * this.ratio);
+        final float screenX = this.preview ? this.x /*+ 0.5f * ratio */ : this.x * this.ratio;
+        final float screenY = 400 - (this.preview ? this.y /*+ 0.5f * ratio */ : this.y * this.ratio);
 
         // this is the square
         GL11.glBegin(GL11.GL_QUADS);
@@ -102,7 +102,7 @@ public class Block extends Renderable {
         return ZIndex.MIDDLE;
     }
 
-    public boolean canMove(GameGrid grid, Shape.Direction direction) {
+    public boolean canMove(final GameGrid grid, final Shape.Direction direction) {
         switch (direction) {
             case DOWN:
                 return grid.isEmpty(this.x, this.y - 1);
@@ -122,11 +122,11 @@ public class Block extends Renderable {
         return this.x;
     }
 
-    public boolean collides(GameGrid grid) {
+    public boolean collides(final GameGrid grid) {
         return !grid.isEmpty(this.x, this.y);
     }
 
-    public void setErasing(boolean erasing) {
+    public void setErasing(final boolean erasing) {
         this.erasing = erasing;
         this.blinkingState = false;
         this.erasingTimer = 250;

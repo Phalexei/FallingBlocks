@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JShape extends Shape {
-    public JShape(int x, int y) {
+    public JShape(final int x, final int y) {
         super(x, y);
         this.blocks.add(new Block(x, y - 1, J_RED, J_GREEN, J_BLUE, this.preview));
         this.blocks.add(new Block(x, y - 2, J_RED, J_GREEN, J_BLUE, this.preview));
         this.blocks.add(new Block(x - 1, y - 2, J_RED, J_GREEN, J_BLUE, this.preview));
     }
 
-    public JShape(int x, int y, boolean preview) {
+    public JShape(final int x, final int y, final boolean preview) {
         super(x, y, preview);
     }
 
     @Override
-    protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<>(4);
+    protected List<Block> getNewBlocks(final boolean preview) {
+        final List<Block> newBlocks = new ArrayList<>(4);
 
         switch (this.orientation) {
             case DOWN:

@@ -36,7 +36,7 @@ public abstract class Shape extends Renderable {
     protected int x, y;
     protected List<Block> blocks;
 
-    protected Shape(int x, int y, boolean preview) {
+    protected Shape(final int x, final int y, final boolean preview) {
         this.x = x;
         this.y = y;
         this.orientation = Orientation.DOWN;
@@ -44,13 +44,13 @@ public abstract class Shape extends Renderable {
         this.preview = preview;
     }
 
-    protected Shape(int x, int y) {
+    protected Shape(final int x, final int y) {
         this(x, y, false);
     }
 
     // returns a new random shape
-    public static Shape randomShape(int x, int y) {
-        Shape ret;
+    public static Shape randomShape(final int x, final int y) {
+        final Shape ret;
         switch (nextShapeType) {
             case 'i':
                 ret = new IShape(x, y);
@@ -80,7 +80,7 @@ public abstract class Shape extends Renderable {
     }
 
     private static char rollNextShapeType() {
-        int choice = random.nextInt(7);
+        final int choice = random.nextInt(7);
         switch (choice) {
             case 0:
                 return 'i';
@@ -108,8 +108,8 @@ public abstract class Shape extends Renderable {
         return this.blocks;
     }
 
-    public boolean collides(GameGrid grid) {
-        for (Block b : this.blocks) {
+    public boolean collides(final GameGrid grid) {
+        for (final Block b : this.blocks) {
             if (b.collides(grid)) {
                 return true;
             }
@@ -117,11 +117,11 @@ public abstract class Shape extends Renderable {
         return false;
     }
 
-    public boolean canRotate(GameGrid grid) {
+    public boolean canRotate(final GameGrid grid) {
         boolean canRotate = true;
-        Orientation tmp = this.orientation;
+        final Orientation tmp = this.orientation;
         this.orientation = this.getNextOrientation();
-        for (Block b : this.getNewBlocks(this.preview)) {
+        for (final Block b : this.getNewBlocks(this.preview)) {
             canRotate &= grid.isEmpty(b.getX(), b.getY());
         }
         this.orientation = tmp;
@@ -139,7 +139,7 @@ public abstract class Shape extends Renderable {
 
     protected abstract List<Block> getNewBlocks(boolean preview);
 
-    public void move(Direction dir) {
+    public void move(final Direction dir) {
         switch (dir) {
             case DOWN:
                 this.y--;
@@ -151,14 +151,14 @@ public abstract class Shape extends Renderable {
                 this.x++;
                 break;
         }
-        for (Block b : this.blocks) {
+        for (final Block b : this.blocks) {
             b.move(dir);
         }
     }
 
-    public boolean canMove(GameGrid grid, Direction direction) {
+    public boolean canMove(final GameGrid grid, final Direction direction) {
         boolean canMove = true;
-        for (Block b : this.blocks) {
+        for (final Block b : this.blocks) {
             canMove &= b.canMove(grid, direction);
         }
         return canMove;
@@ -168,12 +168,12 @@ public abstract class Shape extends Renderable {
         this.move(Direction.DOWN);
     }
 
-    public boolean canFall(GameGrid grid) {
+    public boolean canFall(final GameGrid grid) {
         return this.canMove(grid, Direction.DOWN);
     }
 
-    public void render(int tick) {
-        for (Block b : this.blocks) {
+    public void render(final int tick) {
+        for (final Block b : this.blocks) {
             b.render(tick);
         }
     }

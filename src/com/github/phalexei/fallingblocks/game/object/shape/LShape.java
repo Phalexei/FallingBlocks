@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LShape extends Shape {
-    public LShape(int x, int y) {
+    public LShape(final int x, final int y) {
         super(x, y);
     }
 
-    public LShape(int x, int y, boolean preview) {
+    public LShape(final int x, final int y, final boolean preview) {
         super(x, y, preview);
     }
 
     @Override
-    protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<>(4);
+    protected List<Block> getNewBlocks(final boolean preview) {
+        final List<Block> newBlocks = new ArrayList<>(4);
 
         switch (this.orientation) {
             case DOWN:

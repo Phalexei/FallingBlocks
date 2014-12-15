@@ -12,7 +12,7 @@ public class Input implements IUpdatable {
     private final Map<Integer, InputHandler> handlers;
     private final FallingBlocksGame game;
 
-    public Input(FallingBlocksGame game) {
+    public Input(final FallingBlocksGame game) {
         this.game = game;
         Keyboard.enableRepeatEvents(true);
 
@@ -28,7 +28,7 @@ public class Input implements IUpdatable {
         this.handlers.put(Keyboard.KEY_ESCAPE, ExitHandler.getInstance());
     }
 
-    public void update(int tick) {
+    public void update(final int tick) {
         InputHandler handler;
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) { // key was pressed

@@ -5,18 +5,18 @@ public class Score implements Comparable<Score> {
     private final int score;
     private final String name;
 
-    public Score(String name, int score) {
+    public Score(final String name, final int score) {
         this.name = name;
         this.score = score;
     }
 
     @Override
-    public int compareTo(Score o) {
+    public int compareTo(final Score o) {
         return -Integer.compare(this.score, o.score);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return false;
     }
 

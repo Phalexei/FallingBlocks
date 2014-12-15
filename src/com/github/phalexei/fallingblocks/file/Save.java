@@ -16,21 +16,21 @@ public class Save {
 
     private static final String SEPARATOR = ":";
     private final Path where;
-    private ArrayList<Score> highScores;
+    private final ArrayList<Score> highScores;
 
-    public Save(Path where) {
+    public Save(final Path where) {
         this.where = where;
         this.highScores = new ArrayList<>();
         try {
-            List<String> content = Files.readAllLines(where, StandardCharsets.UTF_8);
+            final List<String> content = Files.readAllLines(where, StandardCharsets.UTF_8);
 
-            for (String s : content) {
-                String[] split = s.split(SEPARATOR);
+            for (final String s : content) {
+                final String[] split = s.split(SEPARATOR);
                 this.highScores.add(new Score(split[0], Integer.parseInt(split[1])));
             }
-        } catch (NoSuchFileException e) {
+        } catch (final NoSuchFileException e) {
             //is ok
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             System.exit(-42);
         }
@@ -40,7 +40,7 @@ public class Save {
         return this.highScores;
     }
 
-    public boolean addScore(Score score) {
+    public boolean addScore(final Score score) {
         int i = 0;
         while (i < this.highScores.size() && this.highScores.get(i).getScore() > score.getScore()) {
             i++;
@@ -59,10 +59,10 @@ public class Save {
     private void write() {
         try (BufferedWriter w = Files.newBufferedWriter(this.where, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
-            for (Score s : this.highScores) {
+            for (final Score s : this.highScores) {
                 w.write(s.toString() + "\n");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

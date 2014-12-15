@@ -6,7 +6,7 @@ public abstract class Renderable implements Comparable<Renderable> {
 
     protected abstract ZIndex getZIndex();
 
-    public int compareTo(Renderable o) {
+    public int compareTo(final Renderable o) {
         return o.getZIndex().ordinal() > this.getZIndex().ordinal() ? -1 : o.getZIndex() == this.getZIndex() ? 0 : 1;
     }
 

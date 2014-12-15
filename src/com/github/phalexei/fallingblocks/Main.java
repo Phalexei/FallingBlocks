@@ -19,14 +19,14 @@ public class Main {
         try {
             int delta = this.getDelta();
 
-            List<IUpdatable> updatables = new ArrayList<>();
+            final List<IUpdatable> updatables = new ArrayList<>();
 
             // init OpenGL
-            Renderer renderer = new Renderer();
+            final Renderer renderer = new Renderer();
             updatables.add(renderer);
 
             // init game
-            FallingBlocksGame game = new FallingBlocksGame(renderer, updatables);
+            final FallingBlocksGame game = new FallingBlocksGame(renderer, updatables);
 
             // main game loop
             while (!Display.isCloseRequested() && !game.isCloseRequested()) {
@@ -35,7 +35,7 @@ public class Main {
                     game.pause();
                 }
 
-                for (IUpdatable u : updatables) {
+                for (final IUpdatable u : updatables) {
                     u.update(delta);
                 }
 
@@ -49,13 +49,13 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         new Main();
     }
 
     private int getDelta() {
-        long time = (Sys.getTime() * 1000) / Sys.getTimerResolution();
-        int delta = (int) (time - this.lastFrame);
+        final long time = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+        final int delta = (int) (time - this.lastFrame);
         this.lastFrame = time;
         return delta;
     }

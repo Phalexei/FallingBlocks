@@ -39,7 +39,7 @@ public class Sound {
         this.gameOver.playAsSoundEffect(1.0f, 1.0f, false);
     }
 
-    public void startPlayingLineErase(boolean tetris) {
+    public void startPlayingLineErase(final boolean tetris) {
         this.stopAllSounds();
         if (tetris) {
             this.tetris.playAsSoundEffect(1.0f, 1.0f, true);

@@ -16,7 +16,7 @@ public class PauseHandler implements InputHandler {
     }
 
     @Override
-    public void action(FallingBlocksGame game) {
+    public void action(final FallingBlocksGame game) {
         if (game.getState() == FallingBlocksGame.GameState.RUNNING
                 || game.getState() == FallingBlocksGame.GameState.PAUSED) {
             game.pause();

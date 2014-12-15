@@ -16,7 +16,7 @@ public class ExitHandler implements InputHandler {
     }
 
     @Override
-    public void action(FallingBlocksGame game) {
+    public void action(final FallingBlocksGame game) {
         game.exit();
     }
 }

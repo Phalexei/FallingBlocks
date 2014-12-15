@@ -16,7 +16,7 @@ public class StartHandler implements InputHandler {
     }
 
     @Override
-    public void action(FallingBlocksGame game) {
+    public void action(final FallingBlocksGame game) {
         if (game.getState() == FallingBlocksGame.GameState.START) {
             game.start();
         }

@@ -119,7 +119,7 @@ public class FallingBlocksGame implements IUpdatable {
     }
 
     @Override
-    public void update(int tick) {
+    public void update(final int tick) {
         switch (this.gameState) {
             case RUNNING:
                 this.doGameLoop(tick);
@@ -141,7 +141,7 @@ public class FallingBlocksGame implements IUpdatable {
         }
     }
 
-    private void doGameLoop(int tick) {
+    private void doGameLoop(final int tick) {
         this.ticksSinceLastUpdate += tick;
         if (this.ticksSinceLastUpdate >= this.getTicksThreshold()) {
             this.ticksSinceLastUpdate = 0;
@@ -152,7 +152,7 @@ public class FallingBlocksGame implements IUpdatable {
                     this.sound.playGameOver();
                     if (this.score > 0) {
                         //TODO: get user name :'(
-                        Score newScore = new Score("test", this.score);
+                        final Score newScore = new Score("test", this.score);
                         if (this.save.addScore(newScore)) {
                         }
                     }
@@ -232,13 +232,13 @@ public class FallingBlocksGame implements IUpdatable {
         }
     }
 
-    public void addLines(Stack<Integer> lines) {
+    public void addLines(final Stack<Integer> lines) {
         this.lines += lines.size();
         if (this.lines / 10 > this.difficulty) {
             this.levelup();
         }
 
-        int points;
+        final int points;
         switch (lines.size()) {
             case 1:
             default:

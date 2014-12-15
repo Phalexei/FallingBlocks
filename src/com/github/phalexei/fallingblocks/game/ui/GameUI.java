@@ -27,7 +27,7 @@ public class GameUI extends Renderable {
     private char nextShapeType = '0';
     private Shape nextShape;
 
-    public GameUI(FallingBlocksGame game) throws IOException, FontFormatException {
+    public GameUI(final FallingBlocksGame game) throws IOException, FontFormatException {
         this.pointsToAdd = new ArrayList<>();
         this.game = game;
         this.toRemove = new ArrayList<>();
@@ -44,7 +44,7 @@ public class GameUI extends Renderable {
     }
 
     @Override
-    public void render(int tick) {
+    public void render(final int tick) {
         switch (this.game.getState()) {
             case START:
                 GL11.glColor3f(1.0f, 0.0f, 0.2f);
@@ -102,13 +102,13 @@ public class GameUI extends Renderable {
         this.text.drawString("HIGH SCORES", 73, 150);
 
         int y = 170;
-        for (Score s : this.game.getHighScore()) {
+        for (final Score s : this.game.getHighScore()) {
             this.text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
             y += 20;
         }
     }
 
-    private void drawNextShape(int tick) {
+    private void drawNextShape(final int tick) {
         if (this.nextShapeType != this.game.getNextShapeType()) {
             this.nextShapeType = this.game.getNextShapeType();
             switch (this.nextShapeType) {
@@ -139,7 +139,7 @@ public class GameUI extends Renderable {
         this.nextShape.render(tick);
     }
 
-    private void drawScore(int tick) {
+    private void drawScore(final int tick) {
 
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -158,7 +158,7 @@ public class GameUI extends Renderable {
         float offset;
 
         // draw score slowly descending and fading
-        for (Map.Entry<Integer, Float> points : this.pointsToAdd) {
+        for (final Map.Entry<Integer, Float> points : this.pointsToAdd) {
             offset = points.getValue();
             this.text.drawString(points.getKey().toString(), 275, (int) (340 + offset), 1.0f - (offset / 60));
             points.setValue(offset + tick / 120f);
@@ -171,7 +171,7 @@ public class GameUI extends Renderable {
 
         // actually clear list
         if (this.toRemove.size() > 0) {
-            for (Map.Entry<Integer, Float> e : this.toRemove) {
+            for (final Map.Entry<Integer, Float> e : this.toRemove) {
                 this.pointsToAdd.remove(e);
             }
             this.toRemove.clear();
@@ -193,7 +193,7 @@ public class GameUI extends Renderable {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    public void addScore(int points) {
+    public void addScore(final int points) {
         this.pointsToAdd.add(new AbstractMap.SimpleEntry<>(points, 0.0f));
     }
 

@@ -8,17 +8,17 @@ import java.util.List;
 
 public class TShape extends Shape {
 
-    public TShape(int x, int y) {
+    public TShape(final int x, final int y) {
         super(x, y);
     }
 
-    public TShape(int x, int y, boolean preview) {
+    public TShape(final int x, final int y, final boolean preview) {
         super(x, y, preview);
     }
 
     @Override
-    protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<>(4);
+    protected List<Block> getNewBlocks(final boolean preview) {
+        final List<Block> newBlocks = new ArrayList<>(4);
 
         switch (this.orientation) {
             case DOWN:
