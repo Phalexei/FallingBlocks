@@ -20,12 +20,12 @@ public class Score implements Comparable<Score> {
         return false;
     }
 
-    public int getScore() {
-        return score;
-    }
-
     @Override
     public String toString() {
-        return name + ":" + score;
+        return this.name + ":" + this.score;
+    }
+
+    public int getScore() {
+        return this.score;
     }
 }

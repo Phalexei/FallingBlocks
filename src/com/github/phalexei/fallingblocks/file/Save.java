@@ -5,11 +5,12 @@ import com.github.phalexei.fallingblocks.game.Score;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class Save {
 
@@ -19,13 +20,13 @@ public class Save {
 
     public Save(Path where) {
         this.where = where;
-        highScores = new ArrayList<>();
+        this.highScores = new ArrayList<>();
         try {
             List<String> content = Files.readAllLines(where, StandardCharsets.UTF_8);
 
             for (String s : content) {
                 String[] split = s.split(SEPARATOR);
-                highScores.add(new Score(split[0], Integer.parseInt(split[1])));
+                this.highScores.add(new Score(split[0], Integer.parseInt(split[1])));
             }
         } catch (NoSuchFileException e) {
             //is ok
@@ -36,19 +37,19 @@ public class Save {
     }
 
     public ArrayList<Score> getHighScores() {
-        return highScores;
+        return this.highScores;
     }
 
     public boolean addScore(Score score) {
         int i = 0;
-        while (i < highScores.size() && highScores.get(i).getScore() > score.getScore()) {
+        while (i < this.highScores.size() && this.highScores.get(i).getScore() > score.getScore()) {
             i++;
         }
-        if (i < highScores.size()) {
-            highScores.add(i, score);
-            write();
-            if (highScores.size() > 10) {
-                highScores.remove(10);
+        if (i < this.highScores.size()) {
+            this.highScores.add(i, score);
+            this.write();
+            if (this.highScores.size() > 10) {
+                this.highScores.remove(10);
             }
             return true;
         }
@@ -56,9 +57,9 @@ public class Save {
     }
 
     private void write() {
-        try (BufferedWriter w = Files.newBufferedWriter(where, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
+        try (BufferedWriter w = Files.newBufferedWriter(this.where, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
-            for (Score s : highScores) {
+            for (Score s : this.highScores) {
                 w.write(s.toString() + "\n");
             }
         } catch (IOException e) {

@@ -1,6 +1,5 @@
 package com.github.phalexei.fallingblocks.sound;
 
-import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 import org.lwjgl.openal.AL;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -10,27 +9,20 @@ import java.io.IOException;
 
 public class Sound {
 
-    private final FallingBlocksGame game;
-    private Audio blockDrop;
-    private Audio gameOver;
-    private Audio lineErase;
-    private Audio tetris;
-    private Audio music;
+    private final Audio blockDrop;
+    private final Audio gameOver;
+    private final Audio lineErase;
+    private final Audio tetris;
+    private final Audio music;
 
-    public Sound(FallingBlocksGame game) {
-        this.game = game;
+    public Sound() throws IOException {
+        this.blockDrop = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/blockDrop.wav"));
+        this.gameOver = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/gameOver.wav"));
+        this.lineErase = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/lineErase.wav"));
+        this.tetris = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/tetris.wav"));
+        this.music = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/Cipher2.wav"));
 
-        try {
-            blockDrop = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/blockDrop.wav"));
-            gameOver = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/gameOver.wav"));
-            lineErase = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/lineErase.wav"));
-            tetris = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/tetris.wav"));
-
-            music = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("res/sounds/Cipher2.wav"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        music.playAsMusic(1.0f, 1.0f, true);
+        this.music.playAsMusic(1.0f, 1.0f, true);
     }
 
     public void close() {
@@ -38,42 +30,42 @@ public class Sound {
     }
 
     public void playBlockDrop() {
-        stopAllSounds();
-        blockDrop.playAsSoundEffect(1.0f, 0.3f, false);
+        this.stopAllSounds();
+        this.blockDrop.playAsSoundEffect(1.0f, 0.3f, false);
     }
 
     public void playGameOver() {
-        stopAllSounds();
-        gameOver.playAsSoundEffect(1.0f, 1.0f, false);
+        this.stopAllSounds();
+        this.gameOver.playAsSoundEffect(1.0f, 1.0f, false);
     }
 
     public void startPlayingLineErase(boolean tetris) {
-        stopAllSounds();
+        this.stopAllSounds();
         if (tetris) {
             this.tetris.playAsSoundEffect(1.0f, 1.0f, true);
         } else {
-            lineErase.playAsSoundEffect(1.0f, 1.0f, true);
+            this.lineErase.playAsSoundEffect(1.0f, 1.0f, true);
         }
     }
 
     public void stopPlayingLineErase() {
-        if (lineErase.isPlaying()) {
-            lineErase.stop();
+        if (this.lineErase.isPlaying()) {
+            this.lineErase.stop();
         }
-        if (tetris.isPlaying()) {
-            tetris.stop();
+        if (this.tetris.isPlaying()) {
+            this.tetris.stop();
         }
     }
 
     private void stopAllSounds() {
-        if (blockDrop.isPlaying()) {
-            blockDrop.stop();
+        if (this.blockDrop.isPlaying()) {
+            this.blockDrop.stop();
         }
-        if (gameOver.isPlaying()) {
-            gameOver.stop();
+        if (this.gameOver.isPlaying()) {
+            this.gameOver.stop();
         }
-        if (lineErase.isPlaying()) {
-            lineErase.stop();
+        if (this.lineErase.isPlaying()) {
+            this.lineErase.stop();
         }
     }
 

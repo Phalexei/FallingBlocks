@@ -4,12 +4,13 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 
 public class MoveRightHandler implements InputHandler {
     private static MoveRightHandler instance = null;
+
     private MoveRightHandler() {
     }
 
     public static InputHandler getInstance() {
         if (instance == null) {
-           instance = new MoveRightHandler();
+            instance = new MoveRightHandler();
         }
         return instance;
     }

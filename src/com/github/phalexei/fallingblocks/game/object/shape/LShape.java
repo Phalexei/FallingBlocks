@@ -17,32 +17,32 @@ public class LShape extends Shape {
 
     @Override
     protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<Block>(4);
+        List<Block> newBlocks = new ArrayList<>(4);
 
-        switch (orientation) {
+        switch (this.orientation) {
             case DOWN:
-                newBlocks.add(new Block(x, y, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 2, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 2, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 2, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 2, L_RED, L_GREEN, L_BLUE, preview));
                 break;
             case LEFT:
-                newBlocks.add(new Block(x - 1, y - 2, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x - 1, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 2, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
                 break;
             case UP:
-                newBlocks.add(new Block(x - 1, y, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 2, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 2, L_RED, L_GREEN, L_BLUE, preview));
                 break;
             case RIGHT:
-                newBlocks.add(new Block(x - 1, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 1, L_RED, L_GREEN, L_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 1, L_RED, L_GREEN, L_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y, L_RED, L_GREEN, L_BLUE, preview));
                 break;
         }
         return newBlocks;

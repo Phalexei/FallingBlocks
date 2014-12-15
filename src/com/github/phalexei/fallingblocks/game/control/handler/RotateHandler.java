@@ -4,7 +4,8 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 
 public class RotateHandler implements InputHandler {
     private static RotateHandler instance = null;
-    private RotateHandler(){
+
+    private RotateHandler() {
     }
 
     public static InputHandler getInstance() {

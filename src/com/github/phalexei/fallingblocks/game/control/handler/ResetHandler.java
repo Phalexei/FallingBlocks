@@ -5,7 +5,8 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 public class ResetHandler implements InputHandler {
     private static ResetHandler instance;
 
-    private ResetHandler() {}
+    private ResetHandler() {
+    }
 
     public static ResetHandler getInstance() {
         if (instance == null) {
@@ -13,8 +14,9 @@ public class ResetHandler implements InputHandler {
         }
         return instance;
     }
+
     @Override
     public void action(FallingBlocksGame game) {
-            game.reset();
+        game.reset();
     }
 }

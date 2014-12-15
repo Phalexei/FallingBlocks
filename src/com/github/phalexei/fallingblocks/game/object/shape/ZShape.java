@@ -17,22 +17,22 @@ public class ZShape extends Shape {
 
     @Override
     protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<Block>(4);
+        List<Block> newBlocks = new ArrayList<>(4);
 
-        switch (getNextOrientation()) {
+        switch (this.getNextOrientation()) {
             case DOWN:
             case UP:
-                newBlocks.add(new Block(x, y, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x - 1, y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x - 1, y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
                 break;
             case LEFT:
             case RIGHT:
-                newBlocks.add(new Block(x -1, y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x, y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 2, Z_RED, Z_GREEN, Z_BLUE, preview));
                 break;
         }
         return newBlocks;

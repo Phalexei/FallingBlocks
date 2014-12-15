@@ -9,6 +9,8 @@ import com.github.phalexei.fallingblocks.game.ui.GameUI;
 import com.github.phalexei.fallingblocks.rendering.Renderer;
 import com.github.phalexei.fallingblocks.sound.Sound;
 
+import java.awt.*;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,40 +18,260 @@ import java.util.Stack;
 
 public class FallingBlocksGame implements IUpdatable {
 
+    private final GameUI ui;
+    private final GameGrid grid;
+    private final Renderer renderer;
+    private final Sound sound;
+    private final Save save;
     private int ticksSinceLastUpdate;
     private int difficulty;
     private int lines;
     private int score;
     private double diffCoef;
-    private final GameUI ui;
-    private final GameGrid grid;
     private Shape fallingShape;
-    private final Renderer renderer;
-    private final Sound sound;
-    private final Save save;
     private ArrayList<Score> highScores;
     private GameState gameState;
     private GameState prevState;
 
     private int stateTimer;
     private Stack<Integer> linesToErase;
-    private boolean needScoreName;
+
+    public FallingBlocksGame(final Renderer renderer, final List<IUpdatable> updatables) throws IOException, FontFormatException {
+        if (renderer == null) {
+            throw new IllegalArgumentException();
+        }
+
+        this.renderer = renderer;
+        updatables.add(this.renderer);
+
+        updatables.add(this);
+
+        // init controls
+        updatables.add(new Input(this));
+
+        // init sounds
+        this.sound = new Sound();
+
+        this.grid = new GameGrid();
+        this.renderer.addRenderable(this.grid);
+
+        this.ui = new GameUI(this);
+        this.renderer.addRenderable(this.ui);
+
+        this.save = new Save(Paths.get("save"));
+
+        this.reset();
+    }
 
     public Integer getScore() {
-        return score;
+        return this.score;
     }
 
     public GameState getState() {
-        return gameState;
+        return this.gameState;
     }
 
-
     public int getLines() {
-        return lines;
+        return this.lines;
     }
 
     public ArrayList<Score> getHighScore() {
-        return highScores;
+        return this.highScores;
+    }
+
+    public void start() {
+        this.gameState = GameState.RUNNING;
+    }
+
+    public void exit() {
+        if (this.gameState != GameState.EXITING) {
+            this.gameState = GameState.EXITING;
+            this.stateTimer = 2000;
+            this.renderer.removeRenderable(this.grid);
+            this.renderer.removeRenderable(this.fallingShape);
+        }
+    }
+
+    public boolean isCloseRequested() {
+        return (this.gameState == GameState.EXITING && this.stateTimer <= 0);
+    }
+
+    public void close() {
+        this.ui.close();
+        this.sound.close();
+    }
+
+    public void reset() {
+        this.gameState = GameState.START;
+        this.ticksSinceLastUpdate = 1000;
+        this.difficulty = 0;
+        this.lines = 0;
+        this.score = 0;
+        this.diffCoef = 0;
+        this.renderer.removeRenderable(this.fallingShape);
+        this.fallingShape = null;
+        this.gameState = GameState.START;
+        this.prevState = null;
+        this.sound.stopPlayingLineErase();
+
+        this.grid.reset();
+        this.ui.reset();
+    }
+
+    @Override
+    public void update(int tick) {
+        switch (this.gameState) {
+            case RUNNING:
+                this.doGameLoop(tick);
+                break;
+            case ERASING_LINES:
+                this.stateTimer -= tick;
+                if (this.stateTimer <= 0) {
+
+                    while (this.linesToErase.size() > 0) {
+                        this.grid.deleteRow(this.linesToErase.pop());
+                    }
+                    this.gameState = GameState.RUNNING;
+                    this.sound.stopPlayingLineErase();
+                }
+                break;
+            case EXITING:
+                this.stateTimer -= tick;
+                break;
+        }
+    }
+
+    private void doGameLoop(int tick) {
+        this.ticksSinceLastUpdate += tick;
+        if (this.ticksSinceLastUpdate >= this.getTicksThreshold()) {
+            this.ticksSinceLastUpdate = 0;
+
+            if (this.fallingShape == null) {
+                if (!this.spawnNewShape()) {
+                    this.gameState = GameState.OVER;
+                    this.sound.playGameOver();
+                    if (this.score > 0) {
+                        //TODO: get user name :'(
+                        Score newScore = new Score("test", this.score);
+                        if (this.save.addScore(newScore)) {
+                        }
+                    }
+                    this.highScores = this.save.getHighScores();
+                }
+            } else {
+                this.tryFall();
+            }
+        }
+    }
+
+    private boolean spawnNewShape() {
+        boolean ret = false;
+        this.fallingShape = Shape.randomShape(GameGrid.WIDTH / 2 - 1, GameGrid.HEIGHT - 1);
+        this.renderer.addRenderable(this.fallingShape);
+        if (!this.fallingShape.collides(this.grid)) {
+            ret = true;
+        }
+        return ret;
+    }
+
+    // try and make the block fall. If it can't, add to grid and delete
+    public void tryFall() {
+        if (this.fallingShape != null) {
+            if (this.fallingShape.canFall(this.grid)) {
+                this.fallingShape.fall();
+            } else {
+                this.grid.addBlocks(this.fallingShape);
+                if (!this.grid.checkForLines(this)) {
+                    // do not play sound if we are deleting lines
+                    this.sound.playBlockDrop();
+                }
+                this.renderer.removeRenderable(this.fallingShape);
+                this.fallingShape = null;
+
+                this.ticksSinceLastUpdate = 1000;
+            }
+        }
+    }
+
+    // gives time to wait between updates, decreases as level increases
+    private int getTicksThreshold() {
+        return (int) Math.max((1000 - (1000 * this.diffCoef)), 0);
+    }
+
+    private void levelup() {
+        this.difficulty++;
+        this.diffCoef = (Math.sqrt(this.difficulty) / Math.sqrt(this.difficulty + 10));
+    }
+
+    public void moveLeft() {
+        if (this.fallingShape != null && this.fallingShape.canMove(this.grid, Shape.Direction.LEFT)) {
+            this.fallingShape.move(Shape.Direction.LEFT);
+        }
+    }
+
+    public void moveRight() {
+        if (this.fallingShape != null && this.fallingShape.canMove(this.grid, Shape.Direction.RIGHT)) {
+            this.fallingShape.move(Shape.Direction.RIGHT);
+        }
+    }
+
+    public void pause() {
+        if (this.gameState.isPausable()) {
+            this.prevState = this.gameState;
+            this.gameState = GameState.PAUSED;
+        } else if (this.gameState == GameState.PAUSED) {
+            this.gameState = this.prevState;
+        }
+    }
+
+    public void rotate() {
+        if (this.fallingShape != null) {
+            if (this.fallingShape.canRotate(this.grid)) {
+                this.fallingShape.rotate();
+            }
+        }
+    }
+
+    public void addLines(Stack<Integer> lines) {
+        this.lines += lines.size();
+        if (this.lines / 10 > this.difficulty) {
+            this.levelup();
+        }
+
+        int points;
+        switch (lines.size()) {
+            case 1:
+            default:
+                points = 40 * (this.difficulty + 1);
+                break;
+            case 2:
+                points = 100 * (this.difficulty + 1);
+                break;
+            case 3:
+                points = 300 * (this.difficulty + 1);
+                break;
+            case 4:
+                points = 1200 * (this.difficulty + 1);
+                break;
+        }
+
+        this.score += points;
+        this.ui.addScore(points);
+
+        this.gameState = GameState.ERASING_LINES;
+        this.stateTimer = 1000 + lines.size() * 250;
+        this.linesToErase = lines;
+
+        this.sound.startPlayingLineErase(lines.size() == 4);
+        this.grid.setErasing(lines);
+    }
+
+    public char getNextShapeType() {
+        return Shape.getNextShapeType();
+    }
+
+    public void toggleShowGrid() {
+        this.grid.toggleShowGrid();
     }
 
     public enum GameState {
@@ -72,230 +294,7 @@ public class FallingBlocksGame implements IUpdatable {
         }
 
         public boolean isPausable() {
-            return pausable;
+            return this.pausable;
         }
-    }
-
-    public FallingBlocksGame(Renderer renderer, List<IUpdatable> updatables) {
-        if (renderer == null) {
-            throw new IllegalArgumentException();
-        }
-
-        this.renderer = renderer;
-        updatables.add(renderer);
-
-        updatables.add(this);
-
-        // init controls
-        updatables.add(new Input(this));
-
-        // init sounds
-        sound = new Sound(this);
-
-        grid = new GameGrid();
-        renderer.addRenderable(grid);
-
-        ui = new GameUI(this);
-        renderer.addRenderable(ui);
-
-        save = new Save(Paths.get("save"));
-
-        reset();
-    }
-
-    public void start() {
-        gameState = GameState.RUNNING;
-    }
-
-    public void exit() {
-        if (gameState != GameState.EXITING) {
-            gameState = GameState.EXITING;
-            stateTimer = 2000;
-            renderer.removeRenderable(grid);
-            renderer.removeRenderable(fallingShape);
-        }
-    }
-
-    public boolean isCloseRequested() {
-        return (gameState == GameState.EXITING && stateTimer <= 0);
-    }
-
-    public void close() {
-        ui.close();
-        sound.close();
-    }
-
-    public void reset() {
-        gameState = GameState.START;
-        ticksSinceLastUpdate = 1000;
-        difficulty = 0;
-        lines = 0;
-        score = 0;
-        diffCoef = 0;
-        renderer.removeRenderable(fallingShape);
-        fallingShape = null;
-        gameState = GameState.START;
-        prevState = null;
-        sound.stopPlayingLineErase();
-
-        grid.reset();
-        ui.reset();
-    }
-
-    @Override
-    public void update(int tick) {
-        switch (gameState) {
-            case RUNNING:
-                doGameLoop(tick);
-                break;
-            case ERASING_LINES:
-                stateTimer -= tick;
-                if (stateTimer <= 0) {
-
-                    while(linesToErase.size() > 0) {
-                        grid.deleteRow(linesToErase.pop());
-                    }
-                    gameState = GameState.RUNNING;
-                    sound.stopPlayingLineErase();
-                }
-                break;
-            case EXITING:
-                stateTimer -= tick;
-                break;
-        }
-    }
-
-    private void doGameLoop(int tick) {
-        ticksSinceLastUpdate += tick;
-        if (ticksSinceLastUpdate >= getTicksThreshold()) {
-            ticksSinceLastUpdate = 0;
-
-            if (fallingShape == null) {
-                if (!spawnNewShape()) {
-                    gameState = GameState.OVER;
-                    sound.playGameOver();
-                    if (score > 0) {
-                        //TODO: get user name :'(
-                        Score newScore = new Score("test", score);
-                        if (save.addScore(newScore)) {
-                            needScoreName = true;
-                        }
-                    }
-                    highScores = save.getHighScores();
-                }
-            } else {
-                tryFall();
-            }
-        }
-    }
-
-    private boolean spawnNewShape() {
-        boolean ret = false;
-        fallingShape = Shape.randomShape(GameGrid.WIDTH / 2 - 1, GameGrid.HEIGHT - 1);
-        renderer.addRenderable(fallingShape);
-        if (!fallingShape.collides(grid)) {
-            ret = true;
-        }
-        return ret;
-    }
-
-    // try and make the block fall. If it can't, add to grid and delete
-    public void tryFall() {
-        if (fallingShape != null) {
-            if (fallingShape.canFall(grid)) {
-                fallingShape.fall();
-            } else {
-                grid.addBlocks(fallingShape);
-                if (!grid.checkForLines(this)) {
-                    // do not play sound if we are deleting lines
-                    sound.playBlockDrop();
-                }
-                renderer.removeRenderable(fallingShape);
-                fallingShape = null;
-
-                ticksSinceLastUpdate = 1000;
-            }
-        }
-    }
-
-    // gives time to wait between updates, decreases as level increases
-    private int getTicksThreshold() {
-        return (int) Math.max((1000 - (1000 * diffCoef)), 0);
-    }
-
-    private void levelup() {
-        difficulty++;
-        diffCoef = (Math.sqrt(difficulty) / Math.sqrt(difficulty+10));
-    }
-
-    public void moveLeft() {
-        if (fallingShape != null && fallingShape.canMove(grid, Shape.Direction.LEFT)) {
-            fallingShape.move(Shape.Direction.LEFT);
-        }
-    }
-
-    public void moveRight() {
-        if (fallingShape != null && fallingShape.canMove(grid, Shape.Direction.RIGHT)) {
-            fallingShape.move(Shape.Direction.RIGHT);
-        }
-    }
-
-    public void pause() {
-        if (gameState.isPausable()) {
-            prevState = gameState;
-            gameState = GameState.PAUSED;
-        } else if (gameState == GameState.PAUSED) {
-            gameState = prevState;
-        }
-    }
-
-    public void rotate() {
-        if (fallingShape != null) {
-            if (fallingShape.canRotate(grid)) {
-                fallingShape.rotate();
-            }
-        }
-    }
-
-    public void addLines(Stack<Integer> lines) {
-        this.lines += lines.size();
-        if (this.lines / 10 > difficulty) {
-            levelup();
-        }
-
-        int points;
-        switch (lines.size()) {
-            case 1:
-            default:
-                points = 40 * (difficulty + 1);
-                break;
-            case 2:
-                points = 100 * (difficulty + 1);
-                break;
-            case 3:
-                points = 300 * (difficulty + 1);
-                break;
-            case 4:
-                points = 1200 * (difficulty + 1);
-                break;
-        }
-
-        score += points;
-        ui.addScore(points);
-
-        gameState = GameState.ERASING_LINES;
-        stateTimer = 1000 + lines.size() * 250;
-        linesToErase = lines;
-
-        sound.startPlayingLineErase(lines.size() == 4);
-        grid.setErasing(lines);
-    }
-
-    public char getNextShapeType() {
-        return Shape.getNextShapeType();
-    }
-
-    public void toggleShowGrid() {
-        grid.toggleShowGrid();
     }
 }

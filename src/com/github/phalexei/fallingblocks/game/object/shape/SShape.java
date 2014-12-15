@@ -18,22 +18,22 @@ public class SShape extends Shape {
 
     @Override
     protected List<Block> getNewBlocks(boolean preview) {
-        List<Block> newBlocks = new ArrayList<Block>(4);
+        List<Block> newBlocks = new ArrayList<>(4);
 
-        switch (orientation) {
+        switch (this.orientation) {
             case DOWN:
             case UP:
-                newBlocks.add(new Block(x, y, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 1, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x + 1, y - 2, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 1, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 2, S_RED, S_GREEN, S_BLUE, preview));
                 break;
             case LEFT:
             case RIGHT:
-                newBlocks.add(new Block(x + 1, y - 1, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x, y - 1, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x, y - 2, S_RED, S_GREEN, S_BLUE, preview));
-                newBlocks.add(new Block(x - 1, y - 2, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x + 1, this.y - 1, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 1, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x, this.y - 2, S_RED, S_GREEN, S_BLUE, preview));
+                newBlocks.add(new Block(this.x - 1, this.y - 2, S_RED, S_GREEN, S_BLUE, preview));
                 break;
         }
         return newBlocks;

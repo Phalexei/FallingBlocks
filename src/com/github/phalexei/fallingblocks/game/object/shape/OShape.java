@@ -19,24 +19,24 @@ public class OShape extends Shape {
     }
 
     @Override
-    protected List<Block> getNewBlocks(boolean preview) {
-        if (blocksCalculated) {
-            return blocks; //lol
-        } else {
-            List<Block> newBlocks = new ArrayList<Block>(4);
-
-            newBlocks.add(new Block(x, y, O_RED, O_GREEN, O_BLUE, preview));
-            newBlocks.add(new Block(x + 1, y, O_RED, O_GREEN, O_BLUE, preview));
-            newBlocks.add(new Block(x, y - 1, O_RED, O_GREEN, O_BLUE, preview));
-            newBlocks.add(new Block(x + 1, y - 1, O_RED, O_GREEN, O_BLUE, preview));
-
-            blocksCalculated = true;
-            return newBlocks;
-        }
+    public boolean canRotate(GameGrid grid) {
+        return true;
     }
 
     @Override
-    public boolean canRotate(GameGrid grid) {
-        return true;
+    protected List<Block> getNewBlocks(boolean preview) {
+        if (this.blocksCalculated) {
+            return this.blocks; //lol
+        } else {
+            List<Block> newBlocks = new ArrayList<>(4);
+
+            newBlocks.add(new Block(this.x, this.y, O_RED, O_GREEN, O_BLUE, preview));
+            newBlocks.add(new Block(this.x + 1, this.y, O_RED, O_GREEN, O_BLUE, preview));
+            newBlocks.add(new Block(this.x, this.y - 1, O_RED, O_GREEN, O_BLUE, preview));
+            newBlocks.add(new Block(this.x + 1, this.y - 1, O_RED, O_GREEN, O_BLUE, preview));
+
+            this.blocksCalculated = true;
+            return newBlocks;
+        }
     }
 }

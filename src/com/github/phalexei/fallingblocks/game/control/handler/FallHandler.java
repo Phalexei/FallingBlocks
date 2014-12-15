@@ -4,6 +4,7 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 
 public class FallHandler implements InputHandler {
     private static FallHandler instance = null;
+
     private FallHandler() {
     }
 

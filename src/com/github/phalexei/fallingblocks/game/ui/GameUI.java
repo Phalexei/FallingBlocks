@@ -7,11 +7,11 @@ import com.github.phalexei.fallingblocks.game.object.shape.*;
 import com.github.phalexei.fallingblocks.rendering.Renderable;
 import com.github.phalexei.fallingblocks.rendering.Text;
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -22,120 +22,65 @@ public class GameUI extends Renderable {
 
     private final List<Map.Entry<Integer, Float>> pointsToAdd, toRemove; // points/time
     private final FallingBlocksGame game;
+    private final Texture inputsTexture;
+    private final Text text;
     private char nextShapeType = '0';
     private Shape nextShape;
 
-    private Texture inputsTexture;
-    private Text text;
-
-    public GameUI(FallingBlocksGame game) {
-        pointsToAdd = new ArrayList<>();
+    public GameUI(FallingBlocksGame game) throws IOException, FontFormatException {
+        this.pointsToAdd = new ArrayList<>();
         this.game = game;
-        toRemove = new ArrayList<>();
+        this.toRemove = new ArrayList<>();
 
-        text = new Text();
+        this.text = new Text();
 
-        try {
-            inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/controls/WhiteSmallNew.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        this.inputsTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/controls/WhiteSmallNew.png"));
+
     }
 
     public void close() {
-        inputsTexture.release();
+        this.inputsTexture.release();
     }
 
     @Override
     public void render(int tick) {
-        switch (game.getState()) {
+        switch (this.game.getState()) {
             case START:
                 GL11.glColor3f(1.0f, 0.0f, 0.2f);
-                text.drawString("FALLING BLOCKS", 75, 180);
+                this.text.drawString("FALLING BLOCKS", 75, 180);
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
-                text.drawString("Press SPACE to start", 48, 200);
-                drawScore(0);
-                drawHUD();
+                this.text.drawString("Press SPACE to start", 48, 200);
+                this.drawScore(0);
+                this.drawHUD();
                 break;
             case RUNNING:
             case ERASING_LINES:
-                drawNextShape(tick);
-                drawScore(tick);
-                drawHUD();
+                this.drawNextShape(tick);
+                this.drawScore(tick);
+                this.drawHUD();
                 break;
             case PAUSED:
-                drawScore(0);
-                greyOutGrid();
+                this.drawScore(0);
+                this.greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
-                text.drawString("GAME PAUSED", 75, 180, true);
-                text.drawString("Press P to continue", 48, 200);
-                drawHUD();
+                this.text.drawString("GAME PAUSED", 75, 180, true);
+                this.text.drawString("Press P to continue", 48, 200);
+                this.drawHUD();
                 break;
             case OVER:
-                drawHUD();
-                greyOutGrid();
+                this.greyOutGrid();
                 GL11.glColor3f(1, 1, 1);
-                text.drawString("GAME OVER", 75, 80, true);
-                text.drawString("Press R to restart", 48, 100);
-                drawScore(0);
-                drawHighScore();
-                drawHUD();
+                this.text.drawString("GAME OVER", 75, 80, true);
+                this.text.drawString("Press R to restart", 48, 100);
+                this.drawScore(0);
+                this.drawHighScore();
+                this.drawHUD();
                 break;
             case EXITING:
-                drawCredits();
+                this.drawCredits();
                 break;
         }
-    }
-
-    private void drawCredits() {
-        GL11.glColor3f(1.0f, 0.0f, 0.2f);
-        text.drawString("FALLING BLOCKS", 130, 180, true);
-        GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        text.drawString("A GAME BY PHALEXEI", 115, 200);
-        text.drawString("THANK YOU FOR PLAYING", 103, 220);
-    }
-
-    private void drawHighScore() {
-        GL11.glColor3f(1.0f, 1.0f, 1.0f);
-
-        text.drawString("HIGH SCORES", 73, 150);
-
-        int y = 170;
-        for (Score s : game.getHighScore()) {
-            text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
-            y += 20;
-        }
-    }
-
-    private void drawNextShape(int tick) {
-        if (nextShapeType != game.getNextShapeType()) {
-            nextShapeType = game.getNextShapeType();
-            switch (nextShapeType) {
-                case 'i':
-                    nextShape = new IShape(300, 90, true);
-                    break;
-                case 'j':
-                    nextShape = new JShape(300, 90, true);
-                    break;
-                case 'l':
-                    nextShape = new LShape(300, 89, true);
-                    break;
-                case 's':
-                    nextShape = new SShape(300, 89, true);
-                    break;
-                case 't':
-                    nextShape = new TShape(300, 89, true);
-                    break;
-                case 'o':
-                    nextShape = new OShape(300, 90, true);
-                    break;
-                case 'z':
-                default:
-                    nextShape = new ZShape(300, 89, true);
-                    break;
-            }
-        }
-        nextShape.render(tick);
     }
 
     @Override
@@ -143,42 +88,93 @@ public class GameUI extends Renderable {
         return ZIndex.FOREGROUND;
     }
 
+    private void drawCredits() {
+        GL11.glColor3f(1.0f, 0.0f, 0.2f);
+        this.text.drawString("FALLING BLOCKS", 130, 180, true);
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+        this.text.drawString("A GAME BY PHALEXEI", 115, 200);
+        this.text.drawString("THANK YOU FOR PLAYING", 103, 220);
+    }
+
+    private void drawHighScore() {
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+
+        this.text.drawString("HIGH SCORES", 73, 150);
+
+        int y = 170;
+        for (Score s : this.game.getHighScore()) {
+            this.text.drawString(s.toString(), 105 - s.toString().length() * 2, y);
+            y += 20;
+        }
+    }
+
+    private void drawNextShape(int tick) {
+        if (this.nextShapeType != this.game.getNextShapeType()) {
+            this.nextShapeType = this.game.getNextShapeType();
+            switch (this.nextShapeType) {
+                case 'i':
+                    this.nextShape = new IShape(300, 90, true);
+                    break;
+                case 'j':
+                    this.nextShape = new JShape(300, 90, true);
+                    break;
+                case 'l':
+                    this.nextShape = new LShape(300, 89, true);
+                    break;
+                case 's':
+                    this.nextShape = new SShape(300, 89, true);
+                    break;
+                case 't':
+                    this.nextShape = new TShape(300, 89, true);
+                    break;
+                case 'o':
+                    this.nextShape = new OShape(300, 90, true);
+                    break;
+                case 'z':
+                default:
+                    this.nextShape = new ZShape(300, 89, true);
+                    break;
+            }
+        }
+        this.nextShape.render(tick);
+    }
+
     private void drawScore(int tick) {
 
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
         // display current score
-        text.drawString("SCORE:", 275, 320, true);
-        text.drawString(game.getScore().toString(), 275, 330);
+        this.text.drawString("SCORE:", 275, 320, true);
+        this.text.drawString(this.game.getScore().toString(), 275, 330);
 
         // display lines
-        text.drawString("LINES:", 275, 290, true);
-        text.drawString(Integer.toString(game.getLines()), 275, 300);
+        this.text.drawString("LINES:", 275, 290, true);
+        this.text.drawString(Integer.toString(this.game.getLines()), 275, 300);
 
         // display level
-        text.drawString("LEVEL:", 275, 260, true);
-        text.drawString(Integer.toString(game.getLines() / 10), 275, 270);
+        this.text.drawString("LEVEL:", 275, 260, true);
+        this.text.drawString(Integer.toString(this.game.getLines() / 10), 275, 270);
 
         float offset;
 
         // draw score slowly descending and fading
-        for (Map.Entry<Integer, Float> points : pointsToAdd) {
+        for (Map.Entry<Integer, Float> points : this.pointsToAdd) {
             offset = points.getValue();
-            text.drawString(points.getKey().toString(), 275, (int) (340 + offset), 1.0f - (offset / 60));
+            this.text.drawString(points.getKey().toString(), 275, (int) (340 + offset), 1.0f - (offset / 60));
             points.setValue(offset + tick / 120f);
 
             // schedule to clear from list when offscren
             if (points.getValue() > 70) {
-                toRemove.add(points);
+                this.toRemove.add(points);
             }
         }
 
         // actually clear list
-        if (toRemove.size() > 0) {
-            for (Map.Entry<Integer, Float> e : toRemove) {
-                pointsToAdd.remove(e);
+        if (this.toRemove.size() > 0) {
+            for (Map.Entry<Integer, Float> e : this.toRemove) {
+                this.pointsToAdd.remove(e);
             }
-            toRemove.clear();
+            this.toRemove.clear();
         }
     }
 
@@ -198,7 +194,7 @@ public class GameUI extends Renderable {
     }
 
     public void addScore(int points) {
-        pointsToAdd.add(new AbstractMap.SimpleEntry<Integer, Float>(points, 0.0f));
+        this.pointsToAdd.add(new AbstractMap.SimpleEntry<>(points, 0.0f));
     }
 
     private void drawHUD() {
@@ -226,18 +222,18 @@ public class GameUI extends Renderable {
         GL11.glPointSize(1.0f);
 
         GL11.glColor3f(1.0f, 0.0f, 0.2f);
-        text.drawString("FALLING BLOCKS", 252, 20);
+        this.text.drawString("FALLING BLOCKS", 252, 20);
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        text.drawString("A game by\nPhalexei", 252, 30);
+        this.text.drawString("A game by\nPhalexei", 252, 30);
 
-        drawInputs();
+        this.drawInputs();
     }
 
     private void drawInputs() {
         // Draw input map
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, inputsTexture.getTextureID());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.inputsTexture.getTextureID());
 
         GL11.glBegin(GL11.GL_QUADS);
         {
@@ -261,6 +257,6 @@ public class GameUI extends Renderable {
     }
 
     public void reset() {
-        pointsToAdd.clear();
+        this.pointsToAdd.clear();
     }
 }

@@ -4,6 +4,7 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 
 public class PauseHandler implements InputHandler {
     private static PauseHandler instance = null;
+
     private PauseHandler() {
     }
 

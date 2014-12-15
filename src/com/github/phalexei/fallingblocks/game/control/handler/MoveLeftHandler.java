@@ -4,6 +4,7 @@ import com.github.phalexei.fallingblocks.game.FallingBlocksGame;
 
 public class MoveLeftHandler implements InputHandler {
     private static MoveLeftHandler instance = null;
+
     private MoveLeftHandler() {
     }
 

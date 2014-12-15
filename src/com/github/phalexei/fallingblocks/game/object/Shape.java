@@ -8,145 +8,44 @@ import java.util.Random;
 
 public abstract class Shape extends Renderable {
 
-    protected Orientation orientation;
-    protected int x,y;
     protected final static float T_RED = 1f;      // red
     protected final static float T_GREEN = 0f;
     protected final static float T_BLUE = 0f;
-
     protected final static float I_RED = 1f;      // yellow
     protected final static float I_GREEN = 1f;
     protected final static float I_BLUE = 0f;
-
     protected final static float Z_RED = 0f;      // green
     protected final static float Z_GREEN = 1f;
     protected final static float Z_BLUE = 0f;
-
     protected final static float S_RED = 0f;      // cyan
     protected final static float S_GREEN = 1f;
     protected final static float S_BLUE = 1f;
-
     protected final static float L_RED = 0f;      // blue
     protected final static float L_GREEN = 0f;
     protected final static float L_BLUE = 1f;
-
     protected final static float J_RED = 1f;      // pink
     protected final static float J_GREEN = 0f;
     protected final static float J_BLUE = 1f;
-
     protected final static float O_RED = 0.5f;    // grey
     protected final static float O_GREEN = 0.5f;
     protected final static float O_BLUE = 0.5f;
-
     private static final Random random = new Random();
     private static char nextShapeType = getNextShapeType();
-
     protected final boolean preview;
+    protected Orientation orientation;
+    protected int x, y;
+    protected List<Block> blocks;
 
     protected Shape(int x, int y, boolean preview) {
         this.x = x;
         this.y = y;
-        orientation = Orientation.DOWN;
-        blocks = getNewBlocks(preview);
+        this.orientation = Orientation.DOWN;
+        this.blocks = this.getNewBlocks(preview);
         this.preview = preview;
     }
 
-    public List<Block> getBlocks() {
-        return blocks;
-    }
-
-    public enum Direction {
-        LEFT,
-        DOWN,
-        RIGHT
-    }
-
-    public enum Orientation {
-        DOWN,
-        LEFT,
-        UP,
-        RIGHT
-    }
-
-    protected List<Block> blocks;
-
-    protected Shape(int x, int y){
+    protected Shape(int x, int y) {
         this(x, y, false);
-    }
-
-    public boolean collides(GameGrid grid) {
-        for (Block b : blocks) {
-            if (b.collides(grid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean canRotate(GameGrid grid) {
-        boolean canRotate = true;
-        Orientation tmp = orientation;
-        orientation = getNextOrientation();
-        for (Block b : getNewBlocks(preview)) {
-            canRotate &= grid.isEmpty(b.getX(), b.getY());
-        }
-        orientation = tmp;
-        return canRotate;
-    }
-
-    public final void rotate() {
-        orientation = getNextOrientation();
-        blocks = getNewBlocks(preview);
-    }
-
-    protected final Orientation getNextOrientation() {
-        return Orientation.values()[(orientation.ordinal()+1)%Orientation.values().length];
-    }
-
-    protected abstract List<Block> getNewBlocks(boolean preview);
-
-    public void move(Direction dir) {
-        switch (dir) {
-            case DOWN:
-                y--;
-                break;
-            case LEFT:
-                x--;
-                break;
-            case RIGHT:
-                x++;
-                break;
-        }
-        for (Block b : blocks) {
-            b.move(dir);
-        }
-    }
-
-    public boolean canMove(GameGrid grid, Direction direction) {
-        boolean canMove = true;
-        for (Block b : blocks) {
-            canMove &= b.canMove(grid, direction);
-        }
-        return canMove;
-    }
-
-    public void fall() {
-        move(Direction.DOWN);
-    }
-
-    public boolean canFall(GameGrid grid) {
-        return canMove(grid, Direction.DOWN);
-    }
-
-    public void render(int tick) {
-        for (Block b : blocks) {
-            b.render(tick);
-        }
-    }
-
-    @Override
-    public ZIndex getZIndex() {
-        return ZIndex.MIDDLE;
     }
 
     // returns a new random shape
@@ -203,5 +102,97 @@ public abstract class Shape extends Renderable {
 
     public static char getNextShapeType() {
         return nextShapeType;
+    }
+
+    public List<Block> getBlocks() {
+        return this.blocks;
+    }
+
+    public boolean collides(GameGrid grid) {
+        for (Block b : this.blocks) {
+            if (b.collides(grid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canRotate(GameGrid grid) {
+        boolean canRotate = true;
+        Orientation tmp = this.orientation;
+        this.orientation = this.getNextOrientation();
+        for (Block b : this.getNewBlocks(this.preview)) {
+            canRotate &= grid.isEmpty(b.getX(), b.getY());
+        }
+        this.orientation = tmp;
+        return canRotate;
+    }
+
+    public final void rotate() {
+        this.orientation = this.getNextOrientation();
+        this.blocks = this.getNewBlocks(this.preview);
+    }
+
+    protected final Orientation getNextOrientation() {
+        return Orientation.values()[(this.orientation.ordinal() + 1) % Orientation.values().length];
+    }
+
+    protected abstract List<Block> getNewBlocks(boolean preview);
+
+    public void move(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                this.y--;
+                break;
+            case LEFT:
+                this.x--;
+                break;
+            case RIGHT:
+                this.x++;
+                break;
+        }
+        for (Block b : this.blocks) {
+            b.move(dir);
+        }
+    }
+
+    public boolean canMove(GameGrid grid, Direction direction) {
+        boolean canMove = true;
+        for (Block b : this.blocks) {
+            canMove &= b.canMove(grid, direction);
+        }
+        return canMove;
+    }
+
+    public void fall() {
+        this.move(Direction.DOWN);
+    }
+
+    public boolean canFall(GameGrid grid) {
+        return this.canMove(grid, Direction.DOWN);
+    }
+
+    public void render(int tick) {
+        for (Block b : this.blocks) {
+            b.render(tick);
+        }
+    }
+
+    @Override
+    public ZIndex getZIndex() {
+        return ZIndex.MIDDLE;
+    }
+
+    public enum Direction {
+        LEFT,
+        DOWN,
+        RIGHT
+    }
+
+    public enum Orientation {
+        DOWN,
+        LEFT,
+        UP,
+        RIGHT
     }
 }
